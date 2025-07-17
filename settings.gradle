@@ -1,10 +1,10 @@
 rootProject.name = 'SkyTracker'
 
 include 'apps:api-server'
-include 'apps:batch-server'
-include 'apps:monitoring-server'
+//include 'apps:batch-server'
+//include 'apps:monitoring-server'
 
-include 'infra:kafka-producer'
-include 'infra:kafka-consumer'
-include 'infra:mysql'
-include 'infra:redis'
+//include 'infra:kafka-producer'
+//include 'infra:kafka-consumer'
+//include 'infra:mysql'
+//include 'infra:redis'
