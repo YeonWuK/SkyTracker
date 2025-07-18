@@ -1,5 +1,6 @@
 package com.skytracker.dto;
 
+import com.skytracker.dto.enums.Role;
 import com.skytracker.security.oauth2.Oauth2UserInfo;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
