@@ -11,7 +11,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class FlightSearchRequestDto {
-
     private String originLocationCode;       // 출발지
     private String destinationLocationCode;  // 도착지
     private String departureDate;            // 출발일
@@ -21,5 +20,4 @@ public class FlightSearchRequestDto {
     private TravelClass travelClass;         // ECONOMY, BUSINESS
     private int adults;                      // 성인 인원
     private int max;                         // 최대 응답 개수
-
 }
