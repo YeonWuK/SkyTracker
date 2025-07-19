@@ -1,7 +1,8 @@
 package com.skytracker.controller;
 
 import com.skytracker.dto.FlightSearchRequestDto;
-import com.skytracker.service.AmadeusService;
+import com.skytracker.service.AmadeusFlightSearchService;
+import com.skytracker.service.AmadeusTokenManger;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -14,14 +15,16 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class FlightsController {
 
-    private final AmadeusService amadeusService;
+    private final AmadeusFlightSearchService flightSearchService;
+    private final AmadeusTokenManger amadeusService;
 
     @PostMapping("/search")
     public ResponseEntity<?> searchFlights(@RequestBody FlightSearchRequestDto flightSearchRequestDto) {
         String token = amadeusService.getAmadeusAccessToken();
-        String result = amadeusService.searchFlights(token, flightSearchRequestDto);
+        String result = flightSearchService.searchFlights(token, flightSearchRequestDto);
         return ResponseEntity.ok(result);
     }
 
 
 }
+

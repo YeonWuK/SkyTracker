@@ -8,6 +8,9 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Getter
 @Builder
@@ -16,8 +19,8 @@ import lombok.NoArgsConstructor;
 @Table(name = "users")
 public class User extends BaseTimeEntity{
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id")
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(name = "role", nullable = false)
@@ -35,6 +38,10 @@ public class User extends BaseTimeEntity{
 
     @Column(name = "nickname")
     private String nickname;
+
+    @Builder.Default
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<UserFlightAlert> userFlightAlert = new ArrayList<>();
 
     public static User from(SocialUserRequestDto socialUserRequestDto) {
         return User.builder()
