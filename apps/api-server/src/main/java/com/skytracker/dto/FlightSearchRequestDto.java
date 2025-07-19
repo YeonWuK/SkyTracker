@@ -23,3 +23,4 @@ public class FlightSearchRequestDto {
     private int max;                         // 최대 응답 개수
 
 }
+
