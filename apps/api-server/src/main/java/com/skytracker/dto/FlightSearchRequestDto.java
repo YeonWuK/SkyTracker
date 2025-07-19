@@ -21,3 +21,4 @@ public class FlightSearchRequestDto {
     private int adults;                      // 성인 인원
     private int max;                         // 최대 응답 개수
 }
+
