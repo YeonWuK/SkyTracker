@@ -36,6 +36,8 @@ dependencies {
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 
 	implementation project(':apps:api-server')
+	implementation project(':apps:elasticsearch')
+
 }
 
 tasks.named('test') {

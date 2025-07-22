@@ -1,4 +1,4 @@
-cluster.name: my_cluster_name
+cluster.name: ElasticSearch
 node.name: node_001
 node.roles: [master, data, ingest]
 
@@ -6,21 +6,12 @@ network.host: 0.0.0.0
 http.port: 9200
 transport.port: 9300
 
-discovery.seed_hosts:
-  - node-01_ip:9300
-  - node-02_ip:9300
-  - node-03_ip:9300
-
-cluster.initial_master_nodes:
-  - node_name-1
-  - node_name-2
-  - node_name-3
-
 http.cors.enabled: true
 http.cors.allow-origin: "*"
 
 bootstrap.memory_lock: true
 indices.fielddata.cache.size: 65%
 
-xpack.monitoring.enabled: true
-xpack.monitoring.collection.enabled: true
+xpack.security.enabled: false
+xpack.security.http.ssl.enabled: false
+xpack.security.transport.ssl.enabled: false

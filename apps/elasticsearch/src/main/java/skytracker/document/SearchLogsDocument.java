@@ -1,5 +1,7 @@
 package skytracker.document;
 
+import com.skytracker.dto.FlightSearchRequestDto;
+import com.skytracker.dto.SearchLogDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -13,6 +15,7 @@ import org.springframework.data.elasticsearch.annotations.FieldType;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Document(indexName = "search-log")
 @AllArgsConstructor
@@ -22,7 +25,7 @@ import java.time.LocalDateTime;
 public class SearchLogsDocument {
 
     @Id
-    private Long id;
+    private String id;
 
     @Field(type = FieldType.Date, format = DateFormat.date_time)
     private LocalDateTime timestamp;

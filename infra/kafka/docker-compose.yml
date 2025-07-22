@@ -103,6 +103,7 @@ services:
 
 networks:
   kafka-net:
+    external: true
     driver: bridge
 
 volumes:
