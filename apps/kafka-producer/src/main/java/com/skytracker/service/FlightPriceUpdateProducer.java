@@ -1,7 +1,7 @@
 package com.skytracker.service;
 
-import com.skytracker.dto.FlightPriceUpdateDto;
 import com.skytracker.dto.FlightSearchRequestDto;
+import com.skytracker.dto.FlightSearchResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
@@ -10,9 +10,9 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class FlightPriceUpdateProducer {
 
-    private final KafkaTemplate<FlightSearchRequestDto, FlightPriceUpdateDto> kafkaTemplate;
+    private final KafkaTemplate<String, FlightSearchResponseDto> kafkaTemplate;
 
-        public void sendPriceUpdate(FlightSearchRequestDto requestDto, FlightPriceUpdateDto updateDto) {
-        kafkaTemplate.send("flight-price-update", requestDto, updateDto);
+        public void sendPriceUpdate(FlightSearchResponseDto responseDto) {
+        kafkaTemplate.send("flight-price-update", responseDto);
     }
 }
