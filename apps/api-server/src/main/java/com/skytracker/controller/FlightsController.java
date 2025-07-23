@@ -6,11 +6,13 @@ import com.skytracker.service.AmadeusFlightSearchService;
 import com.skytracker.service.AmadeusTokenManger;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@Slf4j
 @RequestMapping("/api/flights")
 @RestController
 @RequiredArgsConstructor
