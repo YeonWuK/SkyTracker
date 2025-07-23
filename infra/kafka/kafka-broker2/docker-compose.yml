@@ -1,0 +1,25 @@
+services:
+  kafka-broker2:
+    image: confluentinc/cp-kafka:7.4.3
+    container_name: kafka-broker2
+    ports:
+      - "9092:9092"
+    environment:
+      KAFKA_BROKER_ID: 2
+      KAFKA_ZOOKEEPER_CONNECT: <broker1 서버 IP>.com:2181
+      KAFKA_LISTENERS: INTERNAL://0.0.0.0:9092,EXTERNAL://<개별 서버 IP>:9092
+      KAFKA_ADVERTISED_LISTENERS: INTERNAL://kafka-broker2:9092,EXTERNAL://<개별 서버 IP>:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: false
+      KAFKA_MIN_INSYNC_REPLICAS: 2
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 3
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 3
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 2
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 3000
+      KAFKA_LOG_DIRS: /var/lib/kafka/kafka-logs-2
+    volumes:
+      - kafka-data-2:/var/lib/kafka
+
+volumes:
+  kafka-data-2:
