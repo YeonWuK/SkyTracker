@@ -1,15 +1,18 @@
 package com.skytracker.controller;
 
 import com.skytracker.dto.FlightSearchRequestDto;
+import com.skytracker.dto.FlightSearchResponseDto;
 import com.skytracker.service.AmadeusFlightSearchService;
 import com.skytracker.service.AmadeusTokenManger;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
+@Slf4j
 @RequestMapping("/api/flights")
 @RestController
 @RequiredArgsConstructor
@@ -19,10 +22,10 @@ public class FlightsController {
     private final AmadeusTokenManger amadeusService;
 
     @PostMapping("/search")
-    public ResponseEntity<?> searchFlights(@RequestBody FlightSearchRequestDto flightSearchRequestDto) {
+    public ResponseEntity<?> searchFlights(@RequestBody @Valid FlightSearchRequestDto flightSearchRequestDto) {
         String token = amadeusService.getAmadeusAccessToken();
-        String result = flightSearchService.searchFlights(token, flightSearchRequestDto);
-        return ResponseEntity.ok(result);
+        List<FlightSearchResponseDto> results = flightSearchService.searchFlights(token, flightSearchRequestDto);
+        return ResponseEntity.ok(results);
     }
 
 
