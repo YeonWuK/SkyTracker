@@ -1,0 +1,14 @@
+services:
+  kafdrop:
+    image: obsidiandynamics/kafdrop
+    restart: "no"
+    ports:
+      - "9000:9000"
+    environment:
+      KAFKA_BROKER_CONNECT: kafka-broker1:9092
+    depends_on:
+      - kafka-broker1
+      - kafka-broker2
+      - kafka-broker3
+    networks:
+      - kafka-net
