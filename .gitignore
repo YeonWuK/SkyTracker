@@ -34,7 +34,7 @@ out/
 /.nb-gradle/
 
 ### Infra (ELK, Kafka, Redis 등 운영 볼륨) ###
-infra/elk/elasticsearch/data/infra/**/logs/
+infra/elk/elasticsearch/data/indices
 infra/**/tmp/
 infra/**/secrets/
 infra/**/elasticsearch/config/certs/
