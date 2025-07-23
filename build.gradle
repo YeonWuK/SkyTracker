@@ -6,7 +6,6 @@ allprojects {
 
 subprojects {
     apply plugin: 'java'
-
     group = 'com.skytracker'
     version = '0.0.1-SNAPSHOT'
 
