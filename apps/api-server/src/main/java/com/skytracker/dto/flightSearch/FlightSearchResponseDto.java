@@ -2,10 +2,7 @@ package com.skytracker.dto.flightSearch;
 
 import lombok.*;
 
-<<<<<<< HEAD:apps/api-server/src/main/java/com/skytracker/dto/flightSearch/FlightSearchResponseDto.java
-=======
 import java.util.List;
->>>>>>> origin/dev:apps/api-server/src/main/java/com/skytracker/dto/FlightSearchResponseDto.java
 
 @Getter
 @Builder
