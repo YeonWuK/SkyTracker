@@ -24,15 +24,21 @@ spring:
       hibernate:
         format_sql: true
 
-  data:
-    redis:
-      host: localhost
-      port: 6379
-
   amadeus:
     api:
       client-id: ${AMADEUS_CLIENT_ID}
       client-secret: ${AMADEUS_CLIENT_SECRET}
+
+  data:
+    redis:
+      cluster:
+        nodes:
+          - redis-node-1:6379
+          - redis-node-2:6379
+          - redis-node-3:6379
+          - redis-node-4:6379
+          - redis-node-5:6379
+          - redis-node-6:6379
 
 jwt:
   secret: ${JWT_SECRET}

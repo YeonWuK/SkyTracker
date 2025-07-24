@@ -38,7 +38,7 @@ public class AmadeusResponseParser {
     // --- 책임1: carrierMap 추출 ---
     private Map<String,String> extractCarrierMap(JsonNode root) {
         return objectMapper.convertValue(
-                root.at("/data/dictionaries/carriers"),
+                root.at("/dictionaries/carriers"),
                 new TypeReference<Map<String,String>>() {});
     }
 
@@ -55,6 +55,9 @@ public class AmadeusResponseParser {
         String departureTime = segment.path("departure").path("at").asText();
         String arrivalTime   = segment.path("arrival").path("at").asText();
         String duration      = offer.at("/itineraries/0/duration").asText();
+
+        String arrivalAirport = segment.path("arrival").path("iataCode").asText();
+        String travelClass    = fareDetails.path("cabin").asText();
 
         int seats            = offer.path("numberOfBookableSeats").asInt(0);
         boolean hasCheckedBags = parseCheckedBags(fareDetails);
@@ -80,6 +83,8 @@ public class AmadeusResponseParser {
                 .departureAirport(context.originLocationCode())
                 .currency(context.currency())
                 .departureTime(context.departureDate())
+                .arrivalAirport(arrivalAirport)
+                .travelClass(travelClass)
                 .build();
     }
 
