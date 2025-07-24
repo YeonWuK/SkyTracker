@@ -1,6 +1,7 @@
-package com.skytracker.dto;
+package com.skytracker.dto.flightSearch;
 
 import com.skytracker.dto.enums.TravelClass;
+import com.skytracker.entity.FlightAlert;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -21,5 +22,19 @@ public class FlightSearchRequestDto {
     private TravelClass travelClass;         // ECONOMY, BUSINESS
     private int adults;                      // 성인 인원
     private int max;                         // 최대 응답 개수
+
+    public static FlightSearchRequestDto from(FlightAlert flightAlert) {
+        return FlightSearchRequestDto.builder()
+                .originLocationCode(flightAlert.getDepartureAirport())
+                .destinationLocationCode(flightAlert.getArrivalAirport())
+                .departureDate(flightAlert.getDepartureDate())
+                .returnDate(flightAlert.getArrivalDate())
+                .currencyCode(flightAlert.getCurrency())
+                .travelClass(TravelClass.valueOf(flightAlert.getTravelClass()))
+                .adults(flightAlert.getAdults())
+                .nonStop(true)
+                .max(1)
+                .build();
+    }
 
 }

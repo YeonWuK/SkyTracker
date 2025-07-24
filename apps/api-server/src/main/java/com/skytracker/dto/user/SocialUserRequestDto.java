@@ -1,4 +1,4 @@
-package com.skytracker.dto;
+package com.skytracker.dto.user;
 
 import com.skytracker.dto.enums.Role;
 import com.skytracker.security.oauth2.Oauth2UserInfo;

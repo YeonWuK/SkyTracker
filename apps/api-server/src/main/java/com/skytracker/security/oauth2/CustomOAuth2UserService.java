@@ -1,6 +1,6 @@
 package com.skytracker.security.oauth2;
 
-import com.skytracker.dto.SocialUserRequestDto;
+import com.skytracker.dto.user.SocialUserRequestDto;
 import com.skytracker.entity.User;
 import com.skytracker.repository.UserRepository;
 import com.skytracker.security.auth.CustomUserDetails;

@@ -1,5 +1,6 @@
 package com.skytracker.entity;
 
+import com.skytracker.dto.alerts.FlightAlertRequestDto;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -21,25 +22,60 @@ public class FlightAlert extends BaseTimeEntity{
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "origin_location", nullable = false)
-    private String originLocation;
+    @Column(name = "airline_code", nullable = false)
+    private String airlineCode;
 
-    @Column(name = "destination", nullable = false)
-    private String destination;
+    @Column(name = "flight_number", nullable = false)
+    private String flightNumber;
+
+    @Column(name = "departure_airport", nullable = false)
+    private String departureAirport;
+
+    @Column(name = "arrival_airport", nullable = false)
+    private String arrivalAirport;
 
     @Column(name = "departure_date", nullable = false)
-    private LocalDate departureDate;
+    private String departureDate;
 
-    @Column(name = "return_date")
-    private LocalDate returnDate;
+    @Column(name = "arrival_date", nullable = false)
+    private String arrivalDate;
 
-    @Column(name = "lastCheckedPrice")
+    @Column(name = "travel_class")
+    private String travelClass;
+
+    @Column(name = "currency")
+    private String currency;
+
+    @Column(name = "target_price")
+    private Integer targetPrice;
+
+    @Column(name = "last_checked_price")
     private Integer lastCheckedPrice;
 
-    @Column(name = "lastNotifiedPrice")
-    private Integer lastNotifiedPrice;
+    @Column(name = "new_Price")
+    private Integer newPrice;
+
+    @Column(name = "adults", nullable = false)
+    private int adults;
+
+    @Column(name = "unique_key", unique = true, nullable = false)
+    private String uniqueKey;
 
     @OneToMany(mappedBy = "flightAlert", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<UserFlightAlert> userFlightAlerts = new ArrayList<>();
+
+    public static FlightAlert from(FlightAlertRequestDto dto){
+        return FlightAlert.builder()
+                .airlineCode(dto.getAirlineCode())
+                .flightNumber(dto.getFlightNumber())
+                .departureAirport(dto.getDepartureAirport())
+                .arrivalAirport(dto.getArrivalAirport())
+                .departureDate(dto.getDepartureDate())
+                .travelClass(dto.getTravelClass())
+                .currency(dto.getCurrency())
+                .adults(dto.getAdults())
+                .lastCheckedPrice(dto.getLastCheckedPrice())
+                .build();
+    }
 
 }
