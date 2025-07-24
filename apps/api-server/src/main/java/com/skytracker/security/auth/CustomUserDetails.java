@@ -62,4 +62,8 @@ public class CustomUserDetails implements UserDetails, OAuth2User {
     public String getName() {
         return user.getUsername();
     }
+
+    public Long getUserId(){
+        return user.getId();
+    }
 }

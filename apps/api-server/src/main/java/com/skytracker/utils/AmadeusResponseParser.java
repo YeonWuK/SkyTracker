@@ -1,9 +1,9 @@
-package com.skytracker.uitls;
+package com.skytracker.utils;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.skytracker.dto.FlightSearchResponseDto;
+import com.skytracker.dto.flightSearch.FlightSearchResponseDto;
 import com.skytracker.dto.SearchContext;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
