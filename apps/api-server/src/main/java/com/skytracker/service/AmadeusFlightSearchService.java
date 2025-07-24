@@ -57,14 +57,36 @@ public class AmadeusFlightSearchService {
      */
     private Map<String, Object> buildFlightSearchRequestBody(FlightSearchRequestDto req) {
         Map<String, Object> body = new HashMap<>();
+
+        // 통화 코드
         body.put("currencyCode", req.getCurrencyCode());
-        body.put("originLocationCode", req.getOriginLocationCode());
-        body.put("destinationLocationCode", req.getDestinationLocationCode());
-        body.put("departureDate", req.getDepartureDate());
-        body.put("adults", req.getAdults());
-        body.put("nonStop", req.isNonStop());
-        body.put("travelClass", req.getTravelClass().getValue());
-        body.put("max", req.getMax());
+
+        // originDestinations 구성
+        Map<String, Object> originDest = new HashMap<>();
+        originDest.put("id", "1");
+        originDest.put("originLocationCode", req.getOriginLocationCode());
+        originDest.put("destinationLocationCode", req.getDestinationLocationCode());
+
+        Map<String, String> departureDateTimeRange = new HashMap<>();
+        departureDateTimeRange.put("date", req.getDepartureDate());
+        originDest.put("departureDateTimeRange", departureDateTimeRange);
+
+        body.put("originDestinations", List.of(originDest));
+
+        // travelers 구성
+        Map<String, Object> traveler = new HashMap<>();
+        traveler.put("id", "1");
+        traveler.put("travelerType", "ADULT"); // 또는 CHILD, SENIOR, etc
+        body.put("travelers", List.of(traveler));
+
+        // sources
+        body.put("sources", List.of("GDS"));
+
+        // 검색 조건
+        Map<String, Object> searchCriteria = new HashMap<>();
+        searchCriteria.put("maxFlightOffers", req.getMax());
+        body.put("searchCriteria", searchCriteria);
+
         return body;
     }
 
