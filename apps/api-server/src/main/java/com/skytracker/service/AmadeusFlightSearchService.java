@@ -15,19 +15,17 @@ import org.springframework.web.util.UriComponentsBuilder;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class AmadeusFlightSearchService {
 
-//    private final RedisTemplate<String, Object> redisTemplate;
     private final RestTemplate restTemplate;
     private final AmadeusResponseParser parser;
     private static final String FLIGHTSERACH_URL = "https://test.api.amadeus.com/v2/shopping/flight-offers";
 
     /**
-    /  redis 에서 조회한 accessToken 과 req 통해 Amadeus API 에 Response 요청
+     * redis 에서 조회한 accessToken 과 req 통해 Amadeus API 에 Response 요청
      */
     public List<FlightSearchResponseDto> searchFlights(String accessToken, FlightSearchRequestDto req) {
         try {
@@ -50,34 +48,13 @@ public class AmadeusFlightSearchService {
             return parser.parseFlightSearchResponse(response.getBody(), ctx);
         } catch (HttpServerErrorException e) {
             log.error("Amadeus 서버 내부 오류: {}", e.getResponseBodyAsString());
-            throw new RuntimeException ("현재 항공권 조회가 불가능합니다. 잠시 후 다시 시도해주세요.");
+            throw new RuntimeException("현재 항공권 조회가 불가능합니다. 잠시 후 다시 시도해주세요.");
         }
-
-    }
-
-<<<<<<< HEAD
-    /**
-    /   URL 에 담아서 보낼 요청 값들 build
-     */
-    private String buildFlightSearchUrl(FlightSearchRequestDto req) {
-        return UriComponentsBuilder.fromHttpUrl(FLIGHTSERACH_URL)
-                .queryParam("originLocationCode", req.getOriginLocationCode())
-                .queryParam("destinationLocationCode", req.getDestinationLocationCode())
-                .queryParam("departureDate", req.getDepartureDate())
-                .queryParam("arrivalDate", req.getReturnDate())
-                .queryParam("adults", req.getAdults())
-                .queryParam("nonStop", req.isNonStop())
-                .queryParam("travelClass", req.getTravelClass().getValue())
-                .queryParam("currencyCode", req.getCurrencyCode())
-                .queryParam("max", req.getMax())
-                .toUriString();
     }
 
     /**
-     *  요청 url 값 확인 및 accessToken 확인. 이후 Amadeus API 에다 GET 요청
+     * POST 요청용 Request Body 생성
      */
-    private ResponseEntity<String> callAmadeusGetApi(String url, String accessToken) {
-=======
     private Map<String, Object> buildFlightSearchRequestBody(FlightSearchRequestDto req) {
         Map<String, Object> body = new HashMap<>();
         body.put("currencyCode", req.getCurrencyCode());
@@ -91,8 +68,10 @@ public class AmadeusFlightSearchService {
         return body;
     }
 
+    /**
+     * Amadeus Flight Offers API POST 호출
+     */
     private ResponseEntity<String> callAmadeusPostApi(Map<String, Object> body, String accessToken) {
->>>>>>> origin/dev
         HttpHeaders headers = new HttpHeaders();
         headers.setBearerAuth(accessToken);
         headers.setContentType(MediaType.APPLICATION_JSON);
@@ -111,7 +90,6 @@ public class AmadeusFlightSearchService {
         );
     }
 
-//    public int compareFlightsPrice(FlightSearchRequestDto dto) {
-//
-//    }
+    // 추후 가격 비교 기능
+    // public int compareFlightsPrice(FlightSearchRequestDto dto) { ... }
 }
