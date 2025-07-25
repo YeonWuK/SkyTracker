@@ -1,7 +1,7 @@
 package com.skytracker.service;
 
-import com.skytracker.dto.FlightSearchRequestDto;
-import com.skytracker.dto.FlightSearchResponseDto;
+import com.skytracker.common.dto.flightSearch.FlightSearchRequestDto;
+import com.skytracker.common.dto.flightSearch.FlightSearchResponseDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -14,7 +14,6 @@ import java.util.List;
 public class FlightTrackingService {
 
     private final FlightPriceUpdateProducer flightPriceUpdateProducer;
-    private final FlightAlertEventProducer flightAlertEventProducer;
     private final AmadeusFlightSearchService amadeusService;
 
     /**

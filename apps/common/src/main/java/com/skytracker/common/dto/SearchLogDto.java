@@ -1,5 +1,6 @@
 package com.skytracker.common.dto;
 
+import com.skytracker.common.dto.flightSearch.FlightSearchRequestDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
