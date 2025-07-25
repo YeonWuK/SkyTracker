@@ -1,4 +1,4 @@
-package com.skytracker.dto.flightSearch;
+package com.skytracker.common.dto.flightSearch;
 
 import lombok.*;
 

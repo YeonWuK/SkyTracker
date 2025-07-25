@@ -2,6 +2,7 @@ rootProject.name = 'SkyTracker'
 
 include 'apps:api-server'
 include 'apps:elasticsearch'
+include 'apps:common'
 //include 'apps:batch-server'
 //include 'apps:monitoring-server'
 include 'apps:kafka-producer'

@@ -1,4 +1,4 @@
-package com.skytracker.dto.enums;
+package com.skytracker.common.dto.enums;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

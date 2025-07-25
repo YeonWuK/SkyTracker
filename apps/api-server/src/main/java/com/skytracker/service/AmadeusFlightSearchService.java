@@ -2,10 +2,10 @@ package com.skytracker.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.skytracker.dto.alerts.FlightAlertRequestDto;
-import com.skytracker.dto.flightSearch.FlightSearchRequestDto;
-import com.skytracker.dto.flightSearch.FlightSearchResponseDto;
-import com.skytracker.dto.SearchContext;
+import com.skytracker.common.dto.SearchContext;
+import com.skytracker.common.dto.alerts.FlightAlertRequestDto;
+import com.skytracker.common.dto.flightSearch.FlightSearchRequestDto;
+import com.skytracker.common.dto.flightSearch.FlightSearchResponseDto;
 import com.skytracker.utils.AmadeusResponseParser;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

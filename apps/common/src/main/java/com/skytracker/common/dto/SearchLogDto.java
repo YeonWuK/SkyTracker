@@ -1,4 +1,4 @@
-package com.skytracker.dto;
+package com.skytracker.common.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

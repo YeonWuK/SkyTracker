@@ -1,6 +1,6 @@
-package com.skytracker.dto.flightSearch;
+package com.skytracker.common.dto.flightSearch;
 
-import com.skytracker.dto.enums.TravelClass;
+import com.skytracker.common.dto.enums.TravelClass;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

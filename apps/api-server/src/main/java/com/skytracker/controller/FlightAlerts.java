@@ -1,7 +1,7 @@
 package com.skytracker.controller;
 
-import com.skytracker.dto.alerts.FlightAlertRequestDto;
-import com.skytracker.dto.alerts.FlightAlertResponseDto;
+import com.skytracker.common.dto.alerts.FlightAlertRequestDto;
+import com.skytracker.common.dto.alerts.FlightAlertResponseDto;
 import com.skytracker.security.auth.CustomUserDetails;
 import com.skytracker.service.PriceAlertService;
 import jakarta.validation.Valid;

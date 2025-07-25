@@ -1,5 +1,6 @@
 package com.skytracker.entity;
 
+import com.skytracker.common.dto.alerts.FlightAlertResponseDto;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -30,6 +31,24 @@ public class UserFlightAlert extends BaseTimeEntity{
 
     public void setActive(boolean active) {
         this.isActive = active;
+    }
+
+    public static FlightAlertResponseDto from(UserFlightAlert userFlightAlert) {
+        FlightAlert alert = userFlightAlert.getFlightAlert();
+        return FlightAlertResponseDto.builder()
+                .alertId(userFlightAlert.getId())
+                .origin(alert.getDepartureAirport())
+                .destination(alert.getArrivalAirport())
+                .departureDate(alert.getDepartureDate())
+                .returnDate(alert.getArrivalDate())
+                .airlineCode(alert.getAirlineCode())
+                .flightNumber(alert.getFlightNumber())
+                .travelClass(alert.getTravelClass())
+                .currency(alert.getCurrency())
+                .targetPrice(alert.getTargetPrice())
+                .lastCheckedPrice(alert.getLastCheckedPrice())
+                .isActive(userFlightAlert.isActive())
+                .build();
     }
 
 }
