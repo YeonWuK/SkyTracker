@@ -78,4 +78,9 @@ public class FlightAlert extends BaseTimeEntity{
                 .build();
     }
 
+    public void updateNewPrice(int newPrice){
+        this.lastCheckedPrice = this.newPrice;
+        this.newPrice = newPrice;
+    }
+
 }
