@@ -23,6 +23,7 @@ public class FlightsController {
     public ResponseEntity<?> searchFlights(@RequestBody @Valid FlightSearchRequestDto flightSearchRequestDto) {
         String token = amadeusService.getAmadeusAccessToken();
         List<FlightSearchResponseDto> results = flightSearchService.searchFlights(token, flightSearchRequestDto);
+
         return ResponseEntity.ok(results);
     }
 
