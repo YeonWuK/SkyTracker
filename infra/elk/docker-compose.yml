@@ -1,3 +1,5 @@
+version: "3.8"
+
 services:
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:8.13.4
@@ -7,12 +9,15 @@ services:
     environment:
       - discovery.type=single-node
       - ES_JAVA_OPTS=-Xms1g -Xmx1g
-      - xpack.security.enabled=false
+      - ELASTIC_USERNAME=${ES_USERNAME}
+      - ELASTIC_PASSWORD=${ES_PASSWORD}
     volumes:
-      - ./elasticsearch/data:/usr/share/elasticsearch/data
+      - es-data:/usr/share/elasticsearch/data
       - ./elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro
     networks:
       - elk-net
+    env_file:
+      - ../../.env
 
   logstash:
     image: docker.elastic.co/logstash/logstash:8.13.2
@@ -29,20 +34,24 @@ services:
     networks:
       - kafka-net
       - elk-net
-
+    env_file:
+      - ../../.env
 
   kibana:
     image: docker.elastic.co/kibana/kibana:8.13.2
     container_name: kibana
     environment:
       - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+      - ELASTICSEARCH_USERNAME=${ES_USERNAME}
+      - ELASTICSEARCH_PASSWORD=${ES_PASSWORD}
     depends_on:
       - elasticsearch
     ports:
       - "5601:5601"
     networks:
       - elk-net
-
+    env_file:
+      - ../../.env
 volumes:
   es-data:
 
