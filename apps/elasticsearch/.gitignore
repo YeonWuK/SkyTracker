@@ -33,13 +33,5 @@ out/
 /nbdist/
 /.nb-gradle/
 
-### Infra (ELK, Kafka, Redis 등 운영 볼륨) ###
-infra/elk/elasticsearch/data/indices
-infra/**/tmp/
-infra/**/secrets/
-infra/**/elasticsearch/config/certs/
-infra/**/logstash/config/logstash.keystore
-
 ### VS Code ###
 .vscode/
-apps/api-server/.env
