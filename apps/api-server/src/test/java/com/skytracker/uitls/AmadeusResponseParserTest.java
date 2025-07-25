@@ -2,13 +2,12 @@ package com.skytracker.uitls;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.skytracker.dto.FlightSearchResponseDto;
-import com.skytracker.dto.SearchContext;
+import com.skytracker.common.dto.SearchContext;
+import com.skytracker.common.dto.flightSearch.FlightSearchResponseDto;
+import com.skytracker.utils.AmadeusResponseParser;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 class AmadeusResponseParserTest {
 

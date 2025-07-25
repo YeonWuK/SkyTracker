@@ -1,8 +1,7 @@
-package com.skytracker.dto.alerts;
+package com.skytracker.common.dto.alerts;
 
-import com.skytracker.dto.enums.TravelClass;
-import com.skytracker.dto.flightSearch.FlightSearchRequestDto;
-import com.skytracker.entity.FlightAlert;
+import com.skytracker.common.dto.enums.TravelClass;
+import com.skytracker.common.dto.flightSearch.FlightSearchRequestDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -36,25 +35,6 @@ public class FlightAlertRequestDto {
                 airlineCode,
                 flightNumber
         );
-    }
-
-    /**
-     * FlightAlert → FlightAlertRequestDto 변환
-     */
-    public static FlightAlertRequestDto from(FlightAlert flightAlert) {
-        return FlightAlertRequestDto.builder()
-                .flightId(flightAlert.getId())
-                .airlineCode(flightAlert.getAirlineCode())
-                .flightNumber(flightAlert.getFlightNumber())
-                .departureAirport(flightAlert.getDepartureAirport())
-                .arrivalAirport(flightAlert.getArrivalAirport())
-                .departureDate(flightAlert.getDepartureDate())
-                .travelClass(flightAlert.getTravelClass())
-                .currency(flightAlert.getCurrency())
-                .adults(flightAlert.getAdults())
-                .lastCheckedPrice(flightAlert.getLastCheckedPrice())
-                .newPrice(flightAlert.getNewPrice())
-                .build();
     }
 
     /**

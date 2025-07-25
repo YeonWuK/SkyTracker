@@ -1,13 +1,12 @@
 package com.skytracker.entity;
 
-import com.skytracker.dto.alerts.FlightAlertRequestDto;
+import com.skytracker.common.dto.alerts.FlightAlertRequestDto;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -64,6 +63,11 @@ public class FlightAlert extends BaseTimeEntity{
     @OneToMany(mappedBy = "flightAlert", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<UserFlightAlert> userFlightAlerts = new ArrayList<>();
 
+    public void updateNewPrice(int newPrice){
+        this.lastCheckedPrice = this.newPrice;
+        this.newPrice = newPrice;
+    }
+
     public static FlightAlert from(FlightAlertRequestDto dto){
         return FlightAlert.builder()
                 .airlineCode(dto.getAirlineCode())
@@ -78,9 +82,23 @@ public class FlightAlert extends BaseTimeEntity{
                 .build();
     }
 
-    public void updateNewPrice(int newPrice){
-        this.lastCheckedPrice = this.newPrice;
-        this.newPrice = newPrice;
+    /**
+     * FlightAlert → FlightAlertRequestDto 변환
+     */
+    public static FlightAlertRequestDto from(FlightAlert flightAlert) {
+        return FlightAlertRequestDto.builder()
+                .flightId(flightAlert.getId())
+                .airlineCode(flightAlert.getAirlineCode())
+                .flightNumber(flightAlert.getFlightNumber())
+                .departureAirport(flightAlert.getDepartureAirport())
+                .arrivalAirport(flightAlert.getArrivalAirport())
+                .departureDate(flightAlert.getDepartureDate())
+                .travelClass(flightAlert.getTravelClass())
+                .currency(flightAlert.getCurrency())
+                .adults(flightAlert.getAdults())
+                .lastCheckedPrice(flightAlert.getLastCheckedPrice())
+                .newPrice(flightAlert.getNewPrice())
+                .build();
     }
 
 }

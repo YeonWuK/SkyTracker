@@ -1,7 +1,7 @@
 package com.skytracker.controller;
 
-import com.skytracker.dto.flightSearch.FlightSearchRequestDto;
-import com.skytracker.dto.flightSearch.FlightSearchResponseDto;
+import com.skytracker.common.dto.flightSearch.FlightSearchRequestDto;
+import com.skytracker.common.dto.flightSearch.FlightSearchResponseDto;
 import com.skytracker.service.AmadeusFlightSearchService;
 import com.skytracker.service.AmadeusTokenManger;
 import jakarta.validation.Valid;

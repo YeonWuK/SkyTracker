@@ -1,7 +1,7 @@
 package com.skytracker.service;
 
-import com.skytracker.dto.alerts.FlightAlertRequestDto;
-import com.skytracker.dto.alerts.FlightAlertResponseDto;
+import com.skytracker.common.dto.alerts.FlightAlertRequestDto;
+import com.skytracker.common.dto.alerts.FlightAlertResponseDto;
 import com.skytracker.entity.FlightAlert;
 import com.skytracker.entity.User;
 import com.skytracker.entity.UserFlightAlert;
@@ -15,7 +15,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 
