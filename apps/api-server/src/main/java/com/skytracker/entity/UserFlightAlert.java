@@ -25,4 +25,11 @@ public class UserFlightAlert extends BaseTimeEntity{
     @JoinColumn(name = "alert_id")
     private FlightAlert flightAlert;
 
+    @Column(name = "is_active", nullable = false)
+    private boolean isActive;
+
+    public void setActive(boolean active) {
+        this.isActive = active;
+    }
+
 }
