@@ -1,7 +1,6 @@
 package com.skytracker.service;
 
-import com.skytracker.dto.FlightSearchRequestDto;
-import com.skytracker.dto.SearchLogDto;
+import com.skytracker.common.dto.SearchLogDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
