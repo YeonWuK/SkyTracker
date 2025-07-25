@@ -1,0 +1,49 @@
+spring:
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ${GOOGLE_CLIENT_ID}
+            client-secret: ${GOOGLE_CLIENT_SECRET}
+            scope:
+              - email
+              - profile
+
+  datasource:
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  elasticsearch:
+    uris: ${ES_URI}
+    username: ${ES_USERNAME}
+    password: ${ES_PASSWORD}
+
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+  data:
+    redis:
+      host: localhost
+      port: 6379
+
+  amadeus:
+    api:
+      client-id: ${AMADEUS_CLIENT_ID}
+      client-secret: ${AMADEUS_CLIENT_SECRET}
+
+jwt:
+  secret: ${JWT_SECRET}
+  expiration: ${JWT_EXPIRATION}
+  refreshExpiration: ${JWT_REFRESH_EXPIRATION}
+
+server:
+  port: 8081
