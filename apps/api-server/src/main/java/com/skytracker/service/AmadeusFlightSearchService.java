@@ -1,5 +1,8 @@
 package com.skytracker.service;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.skytracker.dto.alerts.FlightAlertRequestDto;
 import com.skytracker.dto.flightSearch.FlightSearchRequestDto;
 import com.skytracker.dto.flightSearch.FlightSearchResponseDto;
 import com.skytracker.dto.SearchContext;
@@ -10,7 +13,6 @@ import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.HashMap;
 import java.util.List;
@@ -112,6 +114,35 @@ public class AmadeusFlightSearchService {
         );
     }
 
-    // 추후 가격 비교 기능
-    // public int compareFlightsPrice(FlightSearchRequestDto dto) { ... }
+     public int compareFlightsPrice(String accessToken, FlightAlertRequestDto dto) {
+         try {
+             FlightSearchRequestDto searchReq = dto.toSearchRequest();
+             // 1. 요청 본문 구성 및 전송
+             Map<String, Object> requestBody = buildFlightSearchRequestBody(searchReq);
+             ResponseEntity<String> response = callAmadeusPostApi(requestBody, accessToken);
+
+             // 2. 응답 JSON 문자열
+             String body = response.getBody();
+
+             // 3. JSON 파싱
+             ObjectMapper objectMapper = new ObjectMapper();
+             JsonNode root = objectMapper.readTree(body);
+
+             JsonNode data = root.path("data");
+             if (!data.isArray() || data.isEmpty()) {
+                 throw new RuntimeException("항공권 가격을 찾을 수 없습니다.");
+             }
+
+             // 4. 최소 가격 추출 (여러 옵션 중 가장 싼 거)
+             String priceStr = data.get(0).path("price").path("total").asText();
+             int price = (int) Double.parseDouble(priceStr);
+
+             log.info("조회된 new 항공권 가격: {}", price);
+             return price;
+
+         } catch (Exception e) {
+             log.error("가격 비교 중 오류", e);
+             throw new RuntimeException("항공권 가격 비교 중 오류 발생");
+         }
+     }
 }

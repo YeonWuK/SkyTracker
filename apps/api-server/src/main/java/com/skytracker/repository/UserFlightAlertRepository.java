@@ -6,7 +6,12 @@ import com.skytracker.entity.UserFlightAlert;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+import java.util.Optional;
+
 @Repository
 public interface UserFlightAlertRepository extends JpaRepository<UserFlightAlert, Long> {
     boolean existsByUserAndFlightAlert(User user, FlightAlert flightAlert);
+    Optional<UserFlightAlert> findByUserAndFlightAlertId(User user, Long flightAlertId);
+    List<UserFlightAlert> findAllByUser(User user);
 }
