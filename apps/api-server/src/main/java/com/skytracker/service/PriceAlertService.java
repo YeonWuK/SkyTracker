@@ -5,6 +5,8 @@ import com.skytracker.common.dto.alerts.FlightAlertResponseDto;
 import com.skytracker.entity.FlightAlert;
 import com.skytracker.entity.User;
 import com.skytracker.entity.UserFlightAlert;
+import com.skytracker.mapper.FlightAlertMapper;
+import com.skytracker.mapper.UserFlightAlertMapper;
 import com.skytracker.repository.FlightAlertRepository;
 import com.skytracker.repository.UserFlightAlertRepository;
 import com.skytracker.repository.UserRepository;
@@ -35,7 +37,7 @@ public class PriceAlertService {
         String uniqueKey = dto.buildUniqueKey();
 
         FlightAlert flightAlert = flightAlertRepository.findByUniqueKey(uniqueKey)
-                .orElseGet(() -> flightAlertRepository.save(FlightAlert.from(dto)));
+                .orElseGet(() -> flightAlertRepository.save(FlightAlertMapper.toEntity(dto)));
 
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 User 를 찾을 수 없습니다."));
@@ -61,7 +63,7 @@ public class PriceAlertService {
         String accessToken = amadeusTokenManger.getAmadeusAccessToken();
 
         flightAlertRepository.findAll().forEach(alert -> {
-            FlightAlertRequestDto requestDto = FlightAlertRequestDto.from(alert);
+            FlightAlertRequestDto requestDto = FlightAlertMapper.from(alert);
             int lastCheckedPrice = requestDto.getLastCheckedPrice();
             int newPrice = amadeusFlightSearchService.compareFlightsPrice(accessToken, requestDto);
 
@@ -94,7 +96,7 @@ public class PriceAlertService {
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
 
         return userFlightAlertRepository.findAllByUser(user).stream()
-                .map(FlightAlertResponseDto::from)
+                .map(UserFlightAlertMapper::toDto)
                 .collect(Collectors.toList());
     }
 
@@ -106,5 +108,6 @@ public class PriceAlertService {
                 .orElseThrow(() -> new IllegalArgumentException("해당 알림을 찾을 수 없습니다."));
 
         userFlightAlertRepository.delete(alert);
+        log.info("성공적으로 삭제되었습니다! {}", alertId);
     }
 }

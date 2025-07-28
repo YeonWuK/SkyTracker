@@ -23,7 +23,7 @@ public class FlightAlertRequestDto {
     private String currency;               // 통화 코드 (예: KRW)
     private int adults;                    // 성인 인원 수
     private int lastCheckedPrice;          // 마지막으로 확인된 가격
-    private int newPrice;                  // 최신 가격 (갱신 후 저장)
+    private Integer newPrice;              // 최신 가격 (갱신 후 저장)
 
 
     public String buildUniqueKey() {
