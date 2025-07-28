@@ -1,6 +1,6 @@
 package com.skytracker.entity;
 
-import com.skytracker.dto.enums.Role;
+import com.skytracker.dto.user.Role;
 import com.skytracker.dto.user.SocialUserRequestDto;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
