@@ -1,7 +1,5 @@
 package skytracker.document;
 
-import com.skytracker.dto.FlightSearchRequestDto;
-import com.skytracker.dto.SearchLogDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

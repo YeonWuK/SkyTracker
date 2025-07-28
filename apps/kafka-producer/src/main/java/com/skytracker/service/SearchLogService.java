@@ -1,7 +1,7 @@
 package com.skytracker.service;
 
-import com.skytracker.dto.FlightSearchRequestDto;
-import com.skytracker.dto.SearchLogDto;
+import com.skytracker.common.dto.SearchLogDto;
+import com.skytracker.common.dto.flightSearch.FlightSearchRequestDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
