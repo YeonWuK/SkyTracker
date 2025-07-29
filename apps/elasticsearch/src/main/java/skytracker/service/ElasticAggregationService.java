@@ -1,8 +1,9 @@
 package skytracker.service;
 
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
+import co.elastic.clients.elasticsearch._types.FieldValue;
 import co.elastic.clients.elasticsearch._types.aggregations.Aggregation;
-import co.elastic.clients.elasticsearch._types.aggregations.AggregationBuilders;
+import co.elastic.clients.elasticsearch._types.aggregations.CompositeAggregationSource;
 import co.elastic.clients.elasticsearch.core.SearchRequest;
 import co.elastic.clients.elasticsearch.core.SearchResponse;
 import co.elastic.clients.json.JsonData;
@@ -12,8 +13,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -27,45 +30,51 @@ public class ElasticAggregationService {
         SearchRequest request = AggregateRequest(size);
         SearchResponse<Void> response = esClient.search(request, Void.class);
 
-        List<RouteAggregationDto> result = response.aggregations()
+        return response.aggregations()
                 .get("top_routes")
-                .sterms()
+                .composite()
                 .buckets()
                 .array()
                 .stream()
                 .map(bucket -> {
-                    String[] parts = bucket.key().stringValue().split(":");
-                    if (parts.length != 4) {
-                        log.info("Aggregation Parsing Error {}", bucket.key().stringValue());
-                        return null;
-                    }
-                    String routeCode = parts[0] + ":" + parts[1];
-                    String departureDate = parts[2];
-                    String returnDate = Objects.equals(parts[3], "null") ? null : parts[3];
-                    return new RouteAggregationDto(routeCode, departureDate, returnDate, bucket.docCount());
+                    Map<String, FieldValue> keyMap = bucket.key();
+                    return new RouteAggregationDto(
+                            keyMap.get("routeCode").toString(),
+                            keyMap.get("departureDate").toString(),
+                            keyMap.get("returnDate") != null ? keyMap.get("returnDate").toString() : null,
+                            bucket.docCount()
+                    );
                 })
-                .filter(Objects::nonNull)
-                .toList();
-
-        return result;
+                .collect(Collectors.toCollection(ArrayList::new));
     }
 
 
     private SearchRequest AggregateRequest(int size) {
-        Aggregation agg = AggregationBuilders
-                .terms(t -> t
-                        .field("composite_key.keyword")
-                        .size(size));
+        List<Map<String, CompositeAggregationSource>> sources = List.of(
+                Map.of("routeCode", CompositeAggregationSource.of(s -> s.terms(t -> t.field("routeCode.keyword")))),
+                Map.of("departureDate", CompositeAggregationSource.of(s -> s.terms(t -> t.field("departureDate")))),
+                Map.of("returnDate", CompositeAggregationSource.of(s -> s.terms(t -> t.field("returnDate"))))
+        );
 
-        return SearchRequest.of(req -> req
+        Aggregation agg = Aggregation.of(a -> a
+                .composite(c -> c
+                        .size(size)
+                        .sources(sources))
+        );
+
+        return SearchRequest.of(r -> r
                 .index("search-log")
                 .size(0)
-                .query(q -> q.range(r -> r
-                        .field("timestamp")
-                        .gte(JsonData.of("now-1d"))
-                        .lte(JsonData.of("now"))
-                ))
                 .aggregations("top_routes", agg)
-        );
+                .query(q -> q.bool(b -> b
+                        .must(m -> m.range(rg -> rg
+                                .field("timestamp")
+                                .gte(JsonData.fromJson("now-1d"))
+                                .lte(JsonData.fromJson("now"))
+                        ))
+                        .must(m -> m.range(rg -> rg
+                                .field("departureDate")
+                                .gte(JsonData.fromJson("now"))
+                                .lte(JsonData.fromJson("now-+3d")))))));
     }
 }
