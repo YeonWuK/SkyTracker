@@ -14,4 +14,6 @@ public class RouteAggregationDto {
     private String departureDate;
     private String returnDate;
     private long count;
+
+
 }

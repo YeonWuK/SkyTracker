@@ -30,18 +30,20 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.kafka:spring-kafka'
 
-    implementation 'co.elastic.clients:elasticsearch-java:8.13.0'
-    implementation 'org.springframework.data:spring-data-elasticsearch:5.2.0'
+    implementation 'org.elasticsearch.client:elasticsearch-rest-client:8.13.4'
+    implementation 'co.elastic.clients:elasticsearch-java:8.13.4' // 최신 버전 사용 권장
+    implementation 'org.apache.httpcomponents.client5:httpclient5:5.2.1' // 반드시 필요
+    implementation 'jakarta.json:jakarta.json-api:2.1.1'
+    implementation 'org.glassfish:jakarta.json:2.0.1'
 
     implementation 'com.fasterxml.jackson.core:jackson-databind'
     implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
+    implementation 'org.springframework.boot:spring-boot-starter-data-elasticsearch'
 
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
     implementation 'org.springframework.boot:spring-boot-starter'
-    testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.kafka:spring-kafka-test'
-    testImplementation 'org.springframework.security:spring-security-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 
     implementation project(':apps:api-server')
