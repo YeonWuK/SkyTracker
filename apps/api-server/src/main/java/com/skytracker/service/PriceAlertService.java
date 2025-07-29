@@ -94,10 +94,10 @@ public class PriceAlertService {
     public List<FlightAlertResponseDto> getUserFlightAlerts(Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
-
         return userFlightAlertRepository.findAllByUser(user).stream()
                 .map(UserFlightAlertMapper::toDto)
                 .collect(Collectors.toList());
+
     }
 
     public void deleteUserFlightAlert(Long userId, Long alertId) {
