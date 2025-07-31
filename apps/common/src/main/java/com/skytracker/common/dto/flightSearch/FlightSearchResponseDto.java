@@ -1,8 +1,7 @@
 package com.skytracker.common.dto.flightSearch;
 
+import com.skytracker.common.dto.enums.TravelClass;
 import lombok.*;
-
-import java.util.List;
 
 @Getter
 @Builder
@@ -19,11 +18,11 @@ public class FlightSearchResponseDto {
     private String departureTime;           // 출발 시간 (예: 2025-07-25T10:55)
 
     private String arrivalAirport;          // 도착 공항 (예: LHR)
-    private String arrivalTime;             // 도착 시간 (예: 2025-07-25T17:20)
+    private String arrivalTime;             // 도착 시간 (예: 2025e-07-25T17:20)
 
     private String duration;                // 총 비행 시간 (예: PT14H25M)
 
-    private String travelClass;             // 좌석 등급 (예: ECONOMY)
+    private TravelClass travelClass;        // 좌석 등급 (예: ECONOMY)
 
     private int numberOfBookableSeats;      // 예약 가능 좌석 수 (예: 9)
 
