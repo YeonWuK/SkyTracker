@@ -21,10 +21,10 @@ public class FlightTrackingService {
      */
     public void collectAndPublishPrices(String accessToken, FlightSearchRequestDto req) {
         try {
-            List<FlightSearchResponseDto> responses = amadeusService.searchFlights(accessToken, req);
+            List<?> responses = amadeusService.searchFlights(accessToken, req);
 
-            for (FlightSearchResponseDto responseDto : responses) {
-                flightPriceUpdateProducer.sendPriceUpdate(responseDto);
+            for (Object responseDto : responses) {
+                flightPriceUpdateProducer.sendPriceUpdate((FlightSearchResponseDto) responseDto);
             }
 
             log.info("항공권 가격 수집 및 Kafka 발행 완료 ({}건)", responses.size());
