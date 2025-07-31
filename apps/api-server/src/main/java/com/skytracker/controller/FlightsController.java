@@ -1,7 +1,6 @@
 package com.skytracker.controller;
 
 import com.skytracker.common.dto.flightSearch.FlightSearchRequestDto;
-import com.skytracker.common.dto.flightSearch.FlightSearchResponseDto;
 import com.skytracker.service.AmadeusFlightSearchService;
 import com.skytracker.service.AmadeusTokenManger;
 import jakarta.validation.Valid;
@@ -24,7 +23,7 @@ public class FlightsController {
     @PostMapping("/search")
     public ResponseEntity<?> searchFlights(@RequestBody @Valid FlightSearchRequestDto flightSearchRequestDto) {
         String token = amadeusService.getAmadeusAccessToken();
-        List<FlightSearchResponseDto> results = flightSearchService.searchFlights(token, flightSearchRequestDto);
+        List<?> results = flightSearchService.searchFlights(token, flightSearchRequestDto);
         return ResponseEntity.ok().body(results);
     }
 
