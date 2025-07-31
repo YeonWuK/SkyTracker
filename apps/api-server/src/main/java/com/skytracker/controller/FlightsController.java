@@ -1,7 +1,6 @@
 package com.skytracker.controller;
 
 import com.skytracker.common.dto.flightSearch.FlightSearchRequestDto;
-import com.skytracker.common.dto.flightSearch.FlightSearchResponseDto;
 import com.skytracker.service.AmadeusFlightSearchService;
 import com.skytracker.service.AmadeusTokenManger;
 import com.skytracker.service.SearchLogService;
@@ -28,7 +27,7 @@ public class FlightsController {
         searchLogService.publishSearchLog(flightSearchRequestDto);
 
         String token = amadeusService.getAmadeusAccessToken();
-        List<FlightSearchResponseDto> results = flightSearchService.searchFlights(token, flightSearchRequestDto);
+        List<?> results = flightSearchService.searchFlights(token, flightSearchRequestDto);
         return ResponseEntity.ok().body(results);
     }
 
