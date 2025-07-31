@@ -1,5 +1,6 @@
 package com.skytracker.config;
 
+import com.skytracker.common.config.RedisClusterProperties;
 import org.redisson.Redisson;
 import org.redisson.api.RedissonClient;
 import org.redisson.config.Config;
