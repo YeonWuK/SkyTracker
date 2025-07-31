@@ -26,7 +26,7 @@ class AmadeusResponseParserTest {
         );
 
         // when
-        List<FlightSearchResponseDto> result = parser.parseFlightSearchResponse(json, ctx);
+        List<?> result = parser.parseFlightSearchResponse(json, ctx);
 
         // then
         assertThat(result).isNotEmpty();

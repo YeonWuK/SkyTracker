@@ -14,9 +14,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -29,7 +28,7 @@ public class AmadeusFlightSearchService {
     /**
      * redis 에서 조회한 accessToken 과 req 통해 Amadeus API 에 Response 요청
      */
-    public List<FlightSearchResponseDto> searchFlights(String accessToken, FlightSearchRequestDto req) {
+    public List<?> searchFlights(String accessToken, FlightSearchRequestDto req) {
         try {
             Map<String, Object> requestBody = buildFlightSearchRequestBody(req);
             ResponseEntity<String> response = callAmadeusPostApi(requestBody, accessToken);
@@ -42,10 +41,10 @@ public class AmadeusFlightSearchService {
 
             SearchContext ctx = new SearchContext(
                     req.getAdults(),
-                    req.getOriginLocationCode(),
-                    req.getDestinationLocationCode(),
-                    req.getCurrencyCode(),
-                    req.getDepartureDate());
+                    req.getOriginLocationAirport(),
+                    req.getDestinationLocationAirPort(),
+                    req.getTravelClass()
+                    );
 
             return parser.parseFlightSearchResponse(response.getBody(), ctx);
         } catch (HttpServerErrorException e) {
@@ -61,19 +60,30 @@ public class AmadeusFlightSearchService {
         Map<String, Object> body = new HashMap<>();
 
         // 통화 코드
-        body.put("currencyCode", req.getCurrencyCode());
+        body.put("currencyCode", "KRW");
 
-        // originDestinations 구성
-        Map<String, Object> originDest = new HashMap<>();
-        originDest.put("id", "1");
-        originDest.put("originLocationCode", req.getOriginLocationCode());
-        originDest.put("destinationLocationCode", req.getDestinationLocationCode());
+        // 편도
+        List<Map<String, Object>> originDestList = new ArrayList<>();
+        Map<String, Object> outbound = new HashMap<>();
+        outbound.put("id", "1");
+        outbound.put("originLocationCode", req.getOriginLocationAirport());
+        outbound.put("destinationLocationCode", req.getDestinationLocationAirPort());
+        Map<String, String> outboundTime = Map.of("date", req.getDepartureDate());
+        outbound.put("departureDateTimeRange", outboundTime);
+        originDestList.add(outbound);
 
-        Map<String, String> departureDateTimeRange = new HashMap<>();
-        departureDateTimeRange.put("date", req.getDepartureDate());
-        originDest.put("departureDateTimeRange", departureDateTimeRange);
+        //왕복
+        if (req.getReturnDate() != null && !req.getReturnDate().isBlank()) {
+            Map<String, Object> inbound = new HashMap<>();
+            inbound.put("id", "2");
+            inbound.put("originLocationCode", req.getOriginLocationAirport());
+            inbound.put("destinationLocationCode", req.getDestinationLocationAirPort());
+            Map<String, String> inboundTime = Map.of("date", req.getReturnDate());
+            inbound.put("departureDateTimeRange", inboundTime);
+            originDestList.add(inbound);
+        }
+        body.put("originDestinations", originDestList);
 
-        body.put("originDestinations", List.of(originDest));
 
         // travelers 구성
         Map<String, Object> traveler = new HashMap<>();
