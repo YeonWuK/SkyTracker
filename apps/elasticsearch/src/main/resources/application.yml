@@ -32,8 +32,14 @@ spring:
 
   data:
     redis:
-      host: localhost
-      port: 6379
+      cluster:
+        nodes:
+          - redis-node-1:6379
+          - redis-node-2:6379
+          - redis-node-3:6379
+          - redis-node-4:6379
+          - redis-node-5:6379
+          - redis-node-6:6379
 
   amadeus:
     api:

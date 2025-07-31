@@ -3,7 +3,7 @@ package skytracker;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-@SpringBootApplication
+@SpringBootApplication(scanBasePackages = "com.skytracker")
 public class ElasticsearchApplication {
 
     public static void main(String[] args) {
