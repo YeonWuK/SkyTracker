@@ -1,15 +1,18 @@
 package skytracker.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.skytracker.common.dto.RouteAggregationDto;
+import com.skytracker.core.constants.RedisKeys;
+import com.skytracker.core.service.RedisService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.redis.core.ListOperations;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 @Slf4j
@@ -18,31 +21,29 @@ import java.util.List;
 public class RouteAggregationScheduler {
 
     private final ElasticAggregationService esAggregationService;
-    private final RedisTemplate<String, Object> redisTemplate;
+    private final RedisService redisService;
     private final ObjectMapper objectMapper;
-    private static final String HOT_KEY = "HOT_ROUTES";
-    private static final String TEMP_KEY = "HOT_ROUTES:TMP";
 
-
+    /**
+     * 매일 01시 실행 - 인기 노선 상위 10개를 Redis에 캐싱
+     */
     @Scheduled(cron = "0 0 1 * * *")
     public void updateHotRoutes() throws IOException {
         try {
             List<RouteAggregationDto> topRoutes = esAggregationService.getTopRoute(10);
-            topRoutes.sort((a, b) -> Long.compare(b.getDocCount(), a.getDocCount()));
+            topRoutes.sort(Comparator.comparingLong(RouteAggregationDto::getDocCount).reversed());
 
-            redisTemplate.delete(TEMP_KEY);
+            redisService.delete(RedisKeys.HOT_ROUTES_TMP);
 
             for (RouteAggregationDto route : topRoutes) {
                 String json = objectMapper.writeValueAsString(route);
-                redisTemplate.opsForList().rightPush(TEMP_KEY, json);
+                redisService.pushList(RedisKeys.HOT_ROUTES_TMP, json);
             }
 
-            redisTemplate.rename(TEMP_KEY, HOT_KEY);
-
-
+            redisService.rename(RedisKeys.HOT_ROUTES_TMP, RedisKeys.HOT_ROUTES);
         } catch (Exception e) {
             log.error("인기 노선 캐싱 실패", e);
         }
-        }
+    }
 
 }
