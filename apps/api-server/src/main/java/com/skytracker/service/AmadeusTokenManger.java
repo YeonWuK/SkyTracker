@@ -1,11 +1,12 @@
 package com.skytracker.service;
 
+import com.skytracker.core.constants.RedisKeys;
+import com.skytracker.core.service.RedisService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.*;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -29,11 +30,9 @@ public class AmadeusTokenManger {
     private String clientSecret;
 
     private final RestTemplate restTemplate;
-    private final RedisTemplate<String, String> redisTemplate;
     private final RedissonClient redisson;
+    private final RedisService redisService;
 
-    private static final String TOKEN_KEY = "amadeus:access_token";
-    private static final String LOCK_KEY = "lock:amadeus:access_token";
     private static final String ACCESS_URL = "https://test.api.amadeus.com/v1/security/oauth2/token";
 
     /**
@@ -56,7 +55,7 @@ public class AmadeusTokenManger {
             if (response.getStatusCode().is2xxSuccessful()) {
                 String token = (String) response.getBody().get("access_token");
                 log.info("accessToken = {}", token);
-                redisTemplate.opsForValue().set(TOKEN_KEY, token, Duration.ofMinutes(30));
+                redisService.setValueWithTTL(RedisKeys.AMADEUS_TOKEN, token, Duration.ofMinutes(30));
                 return token;
             } else {
                 throw new RuntimeException("Failed to get access token");
@@ -71,16 +70,16 @@ public class AmadeusTokenManger {
      *  redisson Lock 으로 여러 서버에서 요청 하더라도 하나의 요청만 수행할 수 있도록 서비스 로직 구현
      */
     public String getAmadeusAccessToken() {
-        String token = redisTemplate.opsForValue().get(TOKEN_KEY);
+        String token = redisService.getValue(RedisKeys.AMADEUS_TOKEN);
         if (token != null) return token;
 
-        RLock lock = redisson.getLock(LOCK_KEY);
+        RLock lock = redisson.getLock(RedisKeys.AMADEUS_TOKEN_LOCK);
         try {
             // 락 획득 성공
             if (lock.tryLock(5, 3, TimeUnit.SECONDS)) {
                 try {
                     // 다시 redis 확인 (혹시 다른 스레드가 먼저 처리했을 수 있는 경우)
-                    token = redisTemplate.opsForValue().get(TOKEN_KEY);
+                    token = redisService.getValue(RedisKeys.AMADEUS_TOKEN);
                     if (token != null) return token;
 
                     // 진짜 발급
@@ -94,7 +93,7 @@ public class AmadeusTokenManger {
 
                 for (int i = 0; i < 4; i++) { // 최대 4초까지 polling
                     Thread.sleep(1000);
-                    token = redisTemplate.opsForValue().get(TOKEN_KEY);
+                    token = redisService.getValue(RedisKeys.AMADEUS_TOKEN);
                     if (token != null) return token;
                 }
 

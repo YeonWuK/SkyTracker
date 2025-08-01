@@ -1,6 +1,9 @@
 package com.skytracker.core.mapper;
 
+import com.skytracker.common.dto.RouteAggregationDto;
 import com.skytracker.common.dto.SearchContext;
+import com.skytracker.common.dto.enums.TravelClass;
+import com.skytracker.common.dto.flightSearch.FlightSearchRequestDto;
 import com.skytracker.common.dto.flightSearch.FlightSearchResponseDto;
 
 public class FlightSearchResponseMapper {
@@ -36,6 +39,18 @@ public class FlightSearchResponseMapper {
                 .departureAirport(context.originLocationAirPort())
                 .arrivalAirport(context.destinationLocationAirPort())
                 .travelClass(context.travelClass())
+                .build();
+    }
+
+    public static FlightSearchRequestDto toFlightSearchRequestDto(RouteAggregationDto route) {
+        return FlightSearchRequestDto.builder()
+                .originLocationAirport(route.getRouteCode().split(":")[0])
+                .destinationLocationAirPort(route.getRouteCode().split(":")[1])
+                .departureDate(route.getDepartureDate())
+                .returnDate(route.getReturnDate())
+                .travelClass(TravelClass.ECONOMY)
+                .adults(1)
+                .currencyCode("KRW")
                 .build();
     }
 }

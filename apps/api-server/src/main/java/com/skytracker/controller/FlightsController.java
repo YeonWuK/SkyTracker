@@ -23,7 +23,6 @@ public class FlightsController {
 
     @PostMapping("/search")
     public ResponseEntity<?> searchFlights(@RequestBody @Valid FlightSearchRequestDto flightSearchRequestDto) {
-//        searchLogService.publishSearchLog(flightSearchRequestDto);
 
         String token = amadeusService.getAmadeusAccessToken();
         List<?> results = flightSearchService.searchFlights(token, flightSearchRequestDto);
