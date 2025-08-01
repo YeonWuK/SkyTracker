@@ -25,6 +25,7 @@ repositories {
 
 dependencies {
 	implementation project(':apps:common')
+	implementation project(':apps:core')
 
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
