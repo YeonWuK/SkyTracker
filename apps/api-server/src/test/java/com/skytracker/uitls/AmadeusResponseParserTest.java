@@ -3,8 +3,7 @@ package com.skytracker.uitls;
 import static org.assertj.core.api.Assertions.assertThat;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.skytracker.common.dto.SearchContext;
-import com.skytracker.common.dto.flightSearch.FlightSearchResponseDto;
-import com.skytracker.utils.AmadeusResponseParser;
+import com.skytracker.core.utils.AmadeusResponseParser;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;

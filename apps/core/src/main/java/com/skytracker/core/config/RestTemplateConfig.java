@@ -1,4 +1,4 @@
-package com.skytracker.config;
+package com.skytracker.core.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
