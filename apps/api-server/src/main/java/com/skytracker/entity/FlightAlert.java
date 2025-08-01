@@ -59,6 +59,7 @@ public class FlightAlert extends BaseTimeEntity{
     @Column(name = "unique_key", unique = true, nullable = false)
     private String uniqueKey;
 
+    @Builder.Default
     @OneToMany(mappedBy = "flightAlert", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<UserFlightAlert> userFlightAlerts = new ArrayList<>();
 
