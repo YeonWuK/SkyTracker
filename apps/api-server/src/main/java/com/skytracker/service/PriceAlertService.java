@@ -2,6 +2,7 @@ package com.skytracker.service;
 
 import com.skytracker.common.dto.alerts.FlightAlertRequestDto;
 import com.skytracker.common.dto.alerts.FlightAlertResponseDto;
+import com.skytracker.core.service.AmadeusFlightSearchService;
 import com.skytracker.entity.FlightAlert;
 import com.skytracker.entity.User;
 import com.skytracker.entity.UserFlightAlert;

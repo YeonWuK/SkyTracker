@@ -1,4 +1,4 @@
-package com.skytracker.mapper;
+package com.skytracker.core.mapper;
 
 import com.skytracker.common.dto.SearchContext;
 import com.skytracker.common.dto.flightSearch.FlightSearchResponseDto;
