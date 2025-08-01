@@ -1,6 +1,6 @@
 package com.skytracker;
 
-import com.skytracker.common.config.RedisClusterProperties;
+import com.skytracker.core.config.RedisClusterProperties;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
