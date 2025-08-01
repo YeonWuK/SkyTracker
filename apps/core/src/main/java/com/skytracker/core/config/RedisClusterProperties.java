@@ -1,4 +1,4 @@
-package com.skytracker.common.config;
+package com.skytracker.core.config;
 
 import lombok.Getter;
 import lombok.Setter;

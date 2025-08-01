@@ -1,4 +1,4 @@
-package com.skytracker.common.config;
+package com.skytracker.core.config;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
