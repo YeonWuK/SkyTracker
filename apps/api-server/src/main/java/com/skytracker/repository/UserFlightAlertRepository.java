@@ -15,5 +15,4 @@ public interface UserFlightAlertRepository extends JpaRepository<UserFlightAlert
     boolean existsByUserAndFlightAlert(User user, FlightAlert flightAlert);
     Optional<UserFlightAlert> findByUserAndFlightAlertId(User user, Long flightAlertId);
     List<UserFlightAlert> findAllByUser(User user);
-    List<UserFlightAlert> findAllByFlightAlert(FlightAlert flightAlert);
 }

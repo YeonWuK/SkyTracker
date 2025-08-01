@@ -18,6 +18,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -58,35 +59,6 @@ public class PriceAlertService {
 
         userFlightAlertRepository.save(userFlightAlert);
         log.info("알림 등록 완료 - user={}, alert={}", user, uniqueKey);
-    }
-
-    @Scheduled(cron = "0 0 */6 * * *")
-    public void checkPrice() {
-        String accessToken = amadeusTokenManger.getAmadeusAccessToken();
-
-        flightAlertRepository.findAll().forEach(alert -> {
-            FlightAlertRequestDto requestDto = FlightAlertMapper.from(alert);
-            int lastCheckedPrice = requestDto.getLastCheckedPrice();
-            int newPrice = amadeusFlightSearchService.compareFlightsPrice(accessToken, requestDto);
-
-            alert.updateNewPrice(newPrice);
-            flightAlertRepository.save(alert);
-
-            // 가격 변동 시 알림 메세지 발행
-            if (newPrice < lastCheckedPrice) {
-                List<UserFlightAlert> subscribers = userFlightAlertRepository.findAllByFlightAlert(alert);
-
-                if (subscribers.isEmpty()) {
-                    throw new IllegalArgumentException("No subscribers found for this flight alert.");
-                }
-                subscribers.stream()
-                        .filter(UserFlightAlert::isActive)
-                        .forEach(userFlightAlert -> {
-                            FlightAlertEventMessageDto eventMessageDto = UserFlightAlertMapper
-                                    .toEventMessageDto(userFlightAlert);
-                        });
-            }
-        });
     }
 
     public void toggleAlert(Long userId, Long alertId) {
