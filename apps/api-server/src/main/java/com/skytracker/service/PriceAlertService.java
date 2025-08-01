@@ -1,5 +1,6 @@
 package com.skytracker.service;
 
+import com.skytracker.common.dto.alerts.FlightAlertEventMessageDto;
 import com.skytracker.common.dto.alerts.FlightAlertRequestDto;
 import com.skytracker.common.dto.alerts.FlightAlertResponseDto;
 import com.skytracker.entity.FlightAlert;
@@ -70,14 +71,21 @@ public class PriceAlertService {
             alert.updateNewPrice(newPrice);
             flightAlertRepository.save(alert);
 
-            if (newPrice > lastCheckedPrice) {
+            // 가격 변동 시 알림 메세지 발행
+            if (newPrice < lastCheckedPrice) {
+                List<UserFlightAlert> subscribers = userFlightAlertRepository.findAllByFlightAlert(alert);
 
+                if (subscribers.isEmpty()) {
+                    throw new IllegalArgumentException("No subscribers found for this flight alert.");
+                }
+                subscribers.stream()
+                        .filter(UserFlightAlert::isActive)
+                        .forEach(userFlightAlert -> {
+                            FlightAlertEventMessageDto eventMessageDto = UserFlightAlertMapper
+                                    .toEventMessageDto(userFlightAlert);
+                        });
             }
         });
-    }
-
-    public void sendAlertForUser(){
-
     }
 
     public void toggleAlert(Long userId, Long alertId) {

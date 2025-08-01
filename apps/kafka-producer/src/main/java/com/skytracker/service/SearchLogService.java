@@ -17,7 +17,7 @@ public class SearchLogService {
         try {
             SearchLogDto searchLogDto = SearchLogDto.from(req);
             searchLogsProducer.sendSearchLogs(searchLogDto);// Kafka 발행
-            log.info("search logs publish succeed: {} → {}", req.getOriginLocationCode(), req.getDestinationLocationCode());
+            log.info("search logs publish succeed: {} → {}", req.getOriginLocationAirport(), req.getDestinationLocationAirPort());
         } catch (Exception e) {
             log.error("search logs published failed", e);
         }

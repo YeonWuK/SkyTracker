@@ -11,7 +11,7 @@ public class FlightPriceUpdateProducer {
 
     private final KafkaTemplate<String, FlightSearchResponseDto> kafkaTemplate;
 
-        public void sendPriceUpdate(FlightSearchResponseDto responseDto) {
-        kafkaTemplate.send("flight-price-update", responseDto);
+        public void sendNewFlightTicket(FlightSearchResponseDto responseDto) {
+        kafkaTemplate.send("flight-ticket-update", responseDto);
     }
 }
