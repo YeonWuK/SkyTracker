@@ -11,4 +11,3 @@ include 'apps:kafka-producer'
 
 include 'infra:kafka'
 include 'infra:elk'
-//include 'infra:mysql'

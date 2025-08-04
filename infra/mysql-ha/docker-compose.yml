@@ -1,0 +1,50 @@
+version: '3.8'
+
+services:
+  mysql-master:
+    image: mysql:8.0
+    container_name: mysql-master
+    ports:
+      - "3307:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: root1234
+      MYSQL_DATABASE: skytracker
+    volumes:
+      - ./master/data:/var/lib/mysql
+      - ./master/my.cnf:/etc/mysql/my.cnf
+    networks:
+      - mysql-ha-net
+
+  mysql-slave:
+    image: mysql:8.0
+    container_name: mysql-slave
+    ports:
+      - "3308:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: root1234
+    volumes:
+      - ./slave/data:/var/lib/mysql
+      - ./slave/my.cnf:/etc/mysql/my.cnf
+    depends_on:
+      - mysql-master
+    networks:
+      - mysql-ha-net
+
+  orchestrator:
+    image: openarkcode/orchestrator:latest
+    container_name: orchestrator
+    ports:
+      - "3000:3000"
+      - "6030:6030"
+    volumes:
+      - ./orchestrator/orchestrator.conf.json:/etc/orchestrator.conf.json
+      - ./orchestrator/sqlite-data:/var/lib/orchestrator
+    environment:
+      - ORC_API_USER=admin
+      - ORC_API_PASSWORD=admin
+    networks:
+      - mysql-ha-net
+
+networks:
+  mysql-ha-net:
+    driver: bridge

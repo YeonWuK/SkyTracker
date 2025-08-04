@@ -1,0 +1,22 @@
+{
+  "Debug": true,
+  "MySQLTopologyUser": "root",
+  "MySQLTopologyPassword": "root1234",
+  "MySQLOrchestratorUser": "root",
+  "MySQLOrchestratorPassword": "root1234",
+  "DiscoverByShowSlaveHosts": true,
+  "EnableCli": true,
+  "ListenAddress": ":3000",
+  "MySQLConnectTimeoutSeconds": 3,
+  "BackendDB": "sqlite",
+  "SQLite3DataFile": "/var/lib/orchestrator/orchestrator.db",
+  "DefaultInstancePort": 3306,
+  "SkipOrchestratorDatabaseUpdate": false,
+  "HostnameResolveMethod": "none",
+
+  "AutoRecover": true,
+  "RecoverDeadMaster": true,
+  "RecoverDeadMySQLTopology": true,
+  "RecoverMasterClusterFilters": ["*"],
+  "RecoverIntermediateMasterClusterFilters": ["*"]
+}
