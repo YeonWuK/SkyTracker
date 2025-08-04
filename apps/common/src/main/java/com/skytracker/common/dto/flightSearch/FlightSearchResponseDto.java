@@ -1,6 +1,7 @@
 package com.skytracker.common.dto.flightSearch;
 
 import com.skytracker.common.dto.enums.TravelClass;
+import com.skytracker.common.dto.enums.TripType;
 import lombok.*;
 
 @Getter
@@ -32,5 +33,5 @@ public class FlightSearchResponseDto {
 
     private String currency;                // 통화 단위 (예: KRW)
     private int price;                      // 총 가격 (예: 1118800)
-
+    private TripType tripType;              // 편도, 왕복 구분(예: ONE_WAY)
 }

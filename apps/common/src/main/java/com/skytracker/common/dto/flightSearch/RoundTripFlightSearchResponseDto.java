@@ -1,6 +1,7 @@
 package com.skytracker.common.dto.flightSearch;
 
 import com.skytracker.common.dto.enums.TravelClass;
+import com.skytracker.common.dto.enums.TripType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -33,4 +34,5 @@ public class RoundTripFlightSearchResponseDto {
     private int price;
     private boolean isRefundable;
     private boolean isChangeable;
+    private TripType tripType;
 }

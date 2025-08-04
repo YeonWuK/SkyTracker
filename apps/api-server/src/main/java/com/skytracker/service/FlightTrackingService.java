@@ -4,13 +4,13 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.skytracker.common.dto.RouteAggregationDto;
 import com.skytracker.common.dto.flightSearch.FlightSearchRequestDto;
-import com.skytracker.common.dto.flightSearch.FlightSearchResponseDto;
 import com.skytracker.core.constants.RedisKeys;
 import com.skytracker.core.mapper.FlightSearchResponseMapper;
 import com.skytracker.core.service.AmadeusFlightSearchService;
 import com.skytracker.core.service.RedisService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -27,9 +27,9 @@ public class FlightTrackingService {
     private final ObjectMapper objectMapper;
 
     /**
-     * 가격 수집 및 가격변동 이벤트 발행
+     * 가격 수집 및 가격변동 이벤트 발행 (9분)
      */
-    // 추후에 @Scheduled 작업 진행 예정, 작업 예정자 - kanghanseo
+    @Scheduled(cron = "0 */9 * * * *")
     public void collectAndPublishPrices() {
         try {
             String accessToken = redisService.getValue(RedisKeys.AMADEUS_TOKEN);
@@ -42,7 +42,7 @@ public class FlightTrackingService {
 
                 List<?> responses = amadeusService.searchFlights(accessToken, req);
                 for (Object responseDto : responses) {
-                    flightPriceUpdateProducer.sendPriceUpdate((FlightSearchResponseDto) responseDto);
+                    flightPriceUpdateProducer.sendPriceUpdate(responseDto);
                     totalPublished++;
                 }
             }

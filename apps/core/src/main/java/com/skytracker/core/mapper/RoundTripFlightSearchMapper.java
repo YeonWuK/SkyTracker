@@ -1,6 +1,7 @@
 package com.skytracker.core.mapper;
 
 import com.skytracker.common.dto.SearchContext;
+import com.skytracker.common.dto.enums.TripType;
 import com.skytracker.common.dto.flightSearch.RoundTripFlightSearchResponseDto;
 
 public class RoundTripFlightSearchMapper {
@@ -24,7 +25,8 @@ public class RoundTripFlightSearchMapper {
             boolean isChangeable,
             String currency,
             int price,
-            SearchContext searchContext
+            SearchContext searchContext,
+            TripType tripType
     ) {
         return RoundTripFlightSearchResponseDto.builder()
                 .airlineCode(carrierCode)
@@ -45,6 +47,7 @@ public class RoundTripFlightSearchMapper {
                 .isChangeable(isChangeable)
                 .currency(currency)
                 .price(price)
+                .tripType(tripType)
                 .build();
     }
 }
