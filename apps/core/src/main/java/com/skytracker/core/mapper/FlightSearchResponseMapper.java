@@ -3,6 +3,7 @@ package com.skytracker.core.mapper;
 import com.skytracker.common.dto.RouteAggregationDto;
 import com.skytracker.common.dto.SearchContext;
 import com.skytracker.common.dto.enums.TravelClass;
+import com.skytracker.common.dto.enums.TripType;
 import com.skytracker.common.dto.flightSearch.FlightSearchRequestDto;
 import com.skytracker.common.dto.flightSearch.FlightSearchResponseDto;
 
@@ -21,7 +22,8 @@ public class FlightSearchResponseMapper {
             boolean isChangeable,
             String currency,
             int price,
-            SearchContext context
+            SearchContext context,
+            TripType tripType
     ) {
         return FlightSearchResponseDto.builder()
                 .airlineCode(carrierCode)
@@ -39,6 +41,7 @@ public class FlightSearchResponseMapper {
                 .departureAirport(context.originLocationAirPort())
                 .arrivalAirport(context.destinationLocationAirPort())
                 .travelClass(context.travelClass())
+                .tripType(tripType)
                 .build();
     }
 

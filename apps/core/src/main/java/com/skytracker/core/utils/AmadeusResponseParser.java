@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.skytracker.common.dto.SearchContext;
+import com.skytracker.common.dto.enums.TripType;
 import com.skytracker.common.dto.flightSearch.FlightSearchResponseDto;
 import com.skytracker.common.dto.flightSearch.RoundTripFlightSearchResponseDto;
 import com.skytracker.core.mapper.FlightSearchResponseMapper;
@@ -36,7 +37,7 @@ public class AmadeusResponseParser {
             JsonNode data = root.get("data");
             Map<String, String> carrierMap = extractCarrierMap(root);
 
-            if (data.isArray() && data.size() > 0) {
+            if (data.isArray() && !data.isEmpty()) {
                 JsonNode firstOffer = data.get(0);
                 JsonNode itineraries = firstOffer.get("itineraries");
 
@@ -97,7 +98,7 @@ public class AmadeusResponseParser {
         return FlightSearchResponseMapper.toDto(
                 carrierCode, airlineName, flightNumber, departureTime,
                 arrivalTime, duration, seats, hasCheckedBags,
-                isRefundable, isChangeable, currency, price, context
+                isRefundable, isChangeable, currency, price, context, TripType.ONE_WAY
         );
     }
 
@@ -133,7 +134,7 @@ public class AmadeusResponseParser {
                 outboundDepartureTime, outboundArrivalTime,
                 outboundDuration, returnDepartureTime, returnArrivalTime,
                 returnDuration, seats, hasCheckedBags, isRefundable,
-                isChangeable, currency, price, context
+                isChangeable, currency, price, context, TripType.ROUND_TRIP
         );
     }
 
