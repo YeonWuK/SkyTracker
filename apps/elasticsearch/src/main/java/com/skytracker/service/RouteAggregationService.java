@@ -1,24 +1,21 @@
 package skytracker.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.skytracker.common.dto.RouteAggregationDto;
 import com.skytracker.core.constants.RedisKeys;
 import com.skytracker.core.service.RedisService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class RouteAggregationScheduler {
+public class RouteAggregationService {
 
     private final ElasticAggregationService esAggregationService;
     private final RedisService redisService;
@@ -27,7 +24,7 @@ public class RouteAggregationScheduler {
     /**
      * 매일 01시 실행 - 인기 노선 상위 10개를 Redis에 캐싱
      */
-    @Scheduled(cron = "0 0 1 * * *")
+//    @Scheduled(cron = "0 0 1 * * *")
     public void updateHotRoutes() throws IOException {
         try {
             List<RouteAggregationDto> topRoutes = esAggregationService.getTopRoute(10);
