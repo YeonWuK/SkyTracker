@@ -23,32 +23,31 @@ repositories {
     mavenCentral()
 }
 
-dependencies {
-    implementation project(":apps:common")
-    implementation project(':apps:core')
+    dependencies {
+        implementation project(":apps:common")
+        implementation project(':apps:core')
 
-    implementation 'org.springframework.boot:spring-boot-starter-security'
-    implementation 'org.springframework.boot:spring-boot-starter-web'
-    implementation 'org.springframework.kafka:spring-kafka'
+        implementation 'org.springframework.boot:spring-boot-starter-web'
+        implementation 'org.springframework.kafka:spring-kafka'
 
-    implementation 'org.elasticsearch.client:elasticsearch-rest-client:8.13.4'
-    implementation 'co.elastic.clients:elasticsearch-java:8.13.4' // 최신 버전 사용 권장
-    implementation 'org.apache.httpcomponents.client5:httpclient5:5.2.1' // 반드시 필요
-    implementation 'jakarta.json:jakarta.json-api:2.1.1'
-    implementation 'org.glassfish:jakarta.json:2.0.1'
+        implementation 'com.fasterxml.jackson.core:jackson-databind'
+        implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
+        implementation 'org.springframework.boot:spring-boot-starter-data-elasticsearch'
 
-    implementation 'com.fasterxml.jackson.core:jackson-databind'
-    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
-    implementation 'org.springframework.boot:spring-boot-starter-data-elasticsearch'
-
-    compileOnly 'org.projectlombok:lombok'
-    annotationProcessor 'org.projectlombok:lombok'
-    implementation 'org.springframework.boot:spring-boot-starter'
-    testImplementation 'org.springframework.kafka:spring-kafka-test'
-    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
-
-}
+        compileOnly 'org.projectlombok:lombok'
+        annotationProcessor 'org.projectlombok:lombok'
+        implementation 'org.springframework.boot:spring-boot-starter'
+        testImplementation 'org.springframework.kafka:spring-kafka-test'
+        testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    }
 
 tasks.named('test') {
     useJUnitPlatform()
+}
+
+bootJar {
+    enabled = false
+}
+jar {
+    enabled = true
 }

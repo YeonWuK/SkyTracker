@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import com.skytracker.elasticsearch.service.RouteAggregationService;
 
 import java.util.List;
 
@@ -19,17 +20,21 @@ import java.util.List;
 public class FlightsController {
 
     private final AmadeusFlightSearchService flightSearchService;
+    private final RouteAggregationService routeAggregationService;
     private final AmadeusTokenManger amadeusService;
     private final SearchLogService searchLogService;
 
     @PostMapping("/search")
-    public ResponseEntity<?> searchFlights(@RequestBody @Valid FlightSearchRequestDto flightSearchRequestDto) {
-        searchLogService.publishSearchLog(flightSearchRequestDto);
-
-        String token = amadeusService.getAmadeusAccessToken();
-        List<?> results = flightSearchService.searchFlights(token, flightSearchRequestDto);
-        return ResponseEntity.ok().body(results);
+    public ResponseEntity<?> searchFlights(@RequestBody @Valid FlightSearchRequestDto dto) {
+        try {
+            searchLogService.publishSearchLog(dto);
+            String token = amadeusService.getAmadeusAccessToken();
+            List<?> results = flightSearchService.searchFlights(token, dto);
+            return ResponseEntity.ok().body(results);
+        } catch (Exception e) {
+            log.error("Flight search failed", e);
+            return ResponseEntity.internalServerError().body("Internal error: " + e.getMessage());
+        }
     }
-
 }
 

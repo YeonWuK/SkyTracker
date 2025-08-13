@@ -6,6 +6,7 @@ import com.skytracker.core.constants.RedisKeys;
 import com.skytracker.core.service.AmadeusFlightSearchService;
 import com.skytracker.core.service.RedisService;
 import com.skytracker.entity.UserFlightAlert;
+import com.skytracker.kafkaproducer.service.FlightAlertProducer;
 import com.skytracker.mapper.FlightAlertMapper;
 import com.skytracker.mapper.UserFlightAlertMapper;
 import com.skytracker.repository.FlightAlertRepository;
@@ -61,7 +62,7 @@ public class FlightAlertService {
                 List<UserFlightAlert> subscribers = userFlightAlertRepository.findAllByFlightAlert(alert);
 
                 if (subscribers.isEmpty()) {
-                    throw new IllegalArgumentException("No subscribers found for this flight alert.");
+                    throw new IllegalArgumentException("해당 항공권의 구독자가 없음");
                 }
                 subscribers.stream()
                         .filter(UserFlightAlert::isActive)

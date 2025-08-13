@@ -1,4 +1,4 @@
-package com.skytracker.service;
+package com.skytracker.kafkaproducer.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.kafka.core.KafkaTemplate;

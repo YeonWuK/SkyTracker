@@ -20,7 +20,7 @@ public class SearchLogDto {
     public static SearchLogDto from(FlightSearchRequestDto dto) {
         return SearchLogDto.builder()
                 .originLocationCode(dto.getOriginLocationAirport())
-                .destinationLocationCode(dto.getDestinationLocationAirPort())
+                .destinationLocationCode(dto.getDestinationLocationAirport())
                 .departureDate(dto.getDepartureDate())
                 .returnDate(dto.getReturnDate())
                 .build();

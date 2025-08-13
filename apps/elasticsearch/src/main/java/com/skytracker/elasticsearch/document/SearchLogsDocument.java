@@ -1,7 +1,6 @@
-package skytracker.document;
+package com.skytracker.elasticsearch.document;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
@@ -17,14 +16,10 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
-@Builder
 public class SearchLogsDocument {
 
     @Id
     private String id;
-
-    @Field(type = FieldType.Date, format = DateFormat.date_time)
-    private LocalDateTime timestamp;
 
     @Field(type = FieldType.Keyword)
     private String originLocationCode;
