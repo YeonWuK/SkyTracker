@@ -20,7 +20,6 @@ import java.util.List;
 public class FlightsController {
 
     private final AmadeusFlightSearchService flightSearchService;
-    private final RouteAggregationService routeAggregationService;
     private final AmadeusTokenManger amadeusService;
     private final SearchLogService searchLogService;
 

@@ -10,7 +10,6 @@ import org.springframework.data.elasticsearch.annotations.Field;
 import org.springframework.data.elasticsearch.annotations.FieldType;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 @Document(indexName = "search-log")
 @AllArgsConstructor
