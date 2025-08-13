@@ -11,9 +11,11 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class RouteAggregationDto {
 
-    private String routeCode;        // ICN:NRT (출발 공항:도착 공항)
-    private String departureDate;    // 출발 날짜 (25-08-15)
-    private String returnDate;       // 도착 날짜 (25-08-20)
-    private long docCount;           // ES 집계 데이터
+    private String departureAirportCode;  //출발 항공 (ICN)
+    private String arrivalAirport;        //도착 항공 (NRT)
+    private String departureDate;         // 25-08-10
+    private String arrivalDate;           // 25-08-15 or Null
+    private long docCount;                // ES에서 수집된 항공권 수
+
 
 }

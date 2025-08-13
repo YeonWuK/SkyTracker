@@ -28,13 +28,14 @@ dependencies {
 	implementation project(':apps:common')
 	implementation project(':apps:core')
 	implementation project(':apps:kafka-producer')
+	implementation project(':apps:elasticsearch')
 
 	implementation 'com.querydsl:querydsl-jpa:5.0.0:jakarta'
 	annotationProcessor "com.querydsl:querydsl-apt:5.0.0:jakarta"
 	annotationProcessor "jakarta.annotation:jakarta.annotation-api"
 	annotationProcessor "jakarta.persistence:jakarta.persistence-api"
 
-
+	implementation 'org.springframework.boot:spring-boot-starter-data-elasticsearch'
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.springframework.boot:spring-boot-starter-security'
@@ -60,6 +61,24 @@ dependencies {
 
 tasks.named('test') {
 	useJUnitPlatform()
+}
+
+tasks.register('copyConfigs', Copy) {
+	// Kafka 설정 복사
+	from(project(":apps:kafka-producer").layout.projectDirectory.dir("src/main/resources")) {
+		include("application.yml")
+		rename("application.yml", "kafka-application.yml")
+	}
+	// Elasticsearch 설정 복사
+	from(project(":apps:elasticsearch").layout.projectDirectory.dir("src/main/resources")) {
+		include("application.yml")
+		rename("application.yml", "elasticsearch-application.yml")
+	}
+	into layout.projectDirectory.dir("src/main/resources")
+}
+
+tasks.named('processResources') {
+	dependsOn tasks.named('copyConfigs')
 }
 
 clean {

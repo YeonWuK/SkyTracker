@@ -2,6 +2,7 @@ package com.skytracker.service;
 
 import com.skytracker.common.dto.SearchLogDto;
 import com.skytracker.common.dto.flightSearch.FlightSearchRequestDto;
+import com.skytracker.kafkaproducer.service.FlightSearchLogsProducer;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -17,7 +18,7 @@ public class SearchLogService {
         try {
             SearchLogDto searchLogDto = SearchLogDto.from(req);
             searchLogsProducer.sendSearchLogs(searchLogDto);// Kafka 발행
-            log.info("search logs publish succeed: {} → {}", req.getOriginLocationAirport(), req.getDestinationLocationAirPort());
+            log.info("search logs publish succeed: {} → {}", req.getOriginLocationAirport(), req.getDestinationLocationAirport());
         } catch (Exception e) {
             log.error("search logs published failed", e);
         }

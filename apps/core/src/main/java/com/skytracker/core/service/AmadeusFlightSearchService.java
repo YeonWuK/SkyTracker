@@ -41,7 +41,7 @@ public class AmadeusFlightSearchService {
             SearchContext ctx = new SearchContext(
                     req.getAdults(),
                     req.getOriginLocationAirport(),
-                    req.getDestinationLocationAirPort(),
+                    req.getDestinationLocationAirport(),
                     req.getTravelClass()
                     );
 
@@ -66,7 +66,7 @@ public class AmadeusFlightSearchService {
         Map<String, Object> outbound = new HashMap<>();
         outbound.put("id", "1");
         outbound.put("originLocationCode", req.getOriginLocationAirport());
-        outbound.put("destinationLocationCode", req.getDestinationLocationAirPort());
+        outbound.put("destinationLocationCode", req.getDestinationLocationAirport());
         Map<String, String> outboundTime = Map.of("date", req.getDepartureDate());
         outbound.put("departureDateTimeRange", outboundTime);
         originDestList.add(outbound);
@@ -76,7 +76,7 @@ public class AmadeusFlightSearchService {
             Map<String, Object> inbound = new HashMap<>();
             inbound.put("id", "2");
             inbound.put("originLocationCode", req.getOriginLocationAirport());
-            inbound.put("destinationLocationCode", req.getDestinationLocationAirPort());
+            inbound.put("destinationLocationCode", req.getDestinationLocationAirport());
             Map<String, String> inboundTime = Map.of("date", req.getReturnDate());
             inbound.put("departureDateTimeRange", inboundTime);
             originDestList.add(inbound);

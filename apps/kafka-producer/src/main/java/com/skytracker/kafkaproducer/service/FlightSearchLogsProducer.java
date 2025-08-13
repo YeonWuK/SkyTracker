@@ -1,4 +1,4 @@
-package com.skytracker.service;
+package com.skytracker.kafkaproducer.service;
 
 import com.skytracker.common.dto.SearchLogDto;
 import lombok.RequiredArgsConstructor;
@@ -9,9 +9,9 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class FlightSearchLogsProducer {
 
-    private final KafkaTemplate<String, SearchLogDto> kafkaTemplate;
+    private final KafkaTemplate<String, Object> kafkaTemplate;
 
     public void sendSearchLogs(SearchLogDto searchLogDto) {
-        kafkaTemplate.send("search-logs", searchLogDto);
+        kafkaTemplate.send("search-log", searchLogDto);
     }
 }

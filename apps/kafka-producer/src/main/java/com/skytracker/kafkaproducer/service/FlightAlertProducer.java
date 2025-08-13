@@ -1,4 +1,4 @@
-package com.skytracker.service;
+package com.skytracker.kafkaproducer.service;
 
 import com.skytracker.common.dto.alerts.FlightAlertEventMessageDto;
 import lombok.RequiredArgsConstructor;
@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class FlightAlertProducer {
 
-    private final KafkaTemplate<String, FlightAlertEventMessageDto> kafkaTemplate;
+    private final KafkaTemplate<String, Object> kafkaTemplate;
 
     public void sendFlightAlert(FlightAlertEventMessageDto messageDto) {
         kafkaTemplate.send("flight-alert", messageDto);

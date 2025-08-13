@@ -43,3 +43,6 @@ infra/**/logstash/config/logstash.keystore
 ### VS Code ###
 .vscode/
 apps/api-server/.env
+
+### .env ###
+/.env

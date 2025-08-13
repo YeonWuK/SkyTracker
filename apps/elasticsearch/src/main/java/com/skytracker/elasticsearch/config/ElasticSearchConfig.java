@@ -1,4 +1,4 @@
-package skytracker.config;
+package com.skytracker.elasticsearch.config;
 
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
 import co.elastic.clients.json.jackson.JacksonJsonpMapper;
@@ -40,4 +40,5 @@ public class ElasticSearchConfig {
         ElasticsearchTransport transport = new RestClientTransport(restClient, new JacksonJsonpMapper());
         return new ElasticsearchClient(transport);
     }
+
 }

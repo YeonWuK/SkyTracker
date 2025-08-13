@@ -1,5 +1,5 @@
 plugins {
-	id 'java-library'
+	id 'java'
 }
 
 group = 'com.skytracker'
@@ -10,6 +10,11 @@ java {
 		languageVersion = JavaLanguageVersion.of(17)
 	}
 }
+
+jar {
+	enabled = true
+}
+
 
 configurations {
 	compileOnly {

@@ -43,7 +43,7 @@ public class FlightAlertRequestDto {
     public FlightSearchRequestDto toSearchRequest() {
         return FlightSearchRequestDto.builder()
                 .originLocationAirport(this.departureAirport)
-                .destinationLocationAirPort(this.arrivalAirport)
+                .destinationLocationAirport(this.arrivalAirport)
                 .departureDate(this.departureDate)
                 .currencyCode(this.currency)
                 .travelClass(TravelClass.valueOf(this.travelClass))

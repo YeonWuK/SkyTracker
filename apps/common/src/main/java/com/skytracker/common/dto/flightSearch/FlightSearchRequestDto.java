@@ -16,7 +16,7 @@ public class FlightSearchRequestDto {
     @NotBlank(message = "출발 공항 코드는 필수입니다.")
     private String originLocationAirport;       // 출발지
     @NotBlank(message = "도착 공항 코드는 필수입니다.")
-    private String destinationLocationAirPort;  // 도착지
+    private String destinationLocationAirport;  // 도착지
     @NotBlank(message = "출발 날짜는 필수입니다.")
     private String departureDate;            // 출발일
     private String returnDate;               // 귀국일, ✅ 이 값이 있어야 왕복 요청

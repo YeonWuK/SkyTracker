@@ -8,9 +8,9 @@ services:
       - "9200:9200"
     environment:
       - discovery.type=single-node
-      - ES_JAVA_OPTS=-Xms1g -Xmx1g
-      - ELASTIC_USERNAME=${ES_USERNAME}
+      - ES_JAVA_OPTS=-Xms2g -Xmx2g
       - ELASTIC_PASSWORD=${ES_PASSWORD}
+      - KIBANA_PASSWORD=${KIBANA_PASSWORD}
     volumes:
       - es-data:/usr/share/elasticsearch/data
       - ./elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro
@@ -18,9 +18,16 @@ services:
       - elk-net
     env_file:
       - ../../.env
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "curl -s -u $ES_USERNAME:$ES_PASSWORD http://localhost:9200/_cluster/health | grep -E '\"status\":\"(green|yellow)\"' >/dev/null"]
+      timeout: 5s
+      retries: 30
+      start_period: 60s
+
 
   logstash:
-    image: docker.elastic.co/logstash/logstash:8.13.2
+    image: docker.elastic.co/logstash/logstash:8.13.4
     container_name: logstash
     environment:
       - LOGSTASH_JAVA_OPTS=-Xms512m -Xmx512m
@@ -28,7 +35,8 @@ services:
       - ./logstash/config/logstash.yml:/usr/share/logstash/config/logstash.yml:ro
       - ./logstash/pipeline/conf.d:/usr/share/logstash/pipeline
     depends_on:
-      - elasticsearch
+      elasticsearch:
+        condition: service_healthy
     ports:
       - "9600:9600"
     networks:
@@ -36,27 +44,44 @@ services:
       - elk-net
     env_file:
       - ../../.env
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://localhost:9600/ || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 20
+      start_period: 20s
+
 
   kibana:
-    image: docker.elastic.co/kibana/kibana:8.13.2
+    image: docker.elastic.co/kibana/kibana:8.13.4
     container_name: kibana
     environment:
       - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
-      - ELASTICSEARCH_USERNAME=${ES_USERNAME}
-      - ELASTICSEARCH_PASSWORD=${ES_PASSWORD}
+      - ELASTICSEARCH_USERNAME=${KIBANA_USERNAME}
+      - ELASTICSEARCH_PASSWORD=${KIBANA_PASSWORD}
     depends_on:
-      - elasticsearch
+      elasticsearch:
+        condition: service_healthy
     ports:
       - "5601:5601"
     networks:
       - elk-net
     env_file:
       - ../../.env
+    healthcheck:
+      test: ["CMD-SHELL", "curl -sI http://localhost:5601 | grep -E ' 200| 302' >/dev/null"]
+      interval: 15s
+      timeout: 5s
+      retries: 20
+      start_period: 30s
+
 volumes:
   es-data:
 
 networks:
+  elk-net:
+    external: true
+    driver: bridge
   kafka-net:
     external: true
-  elk-net:
-    driver: bridge

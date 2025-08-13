@@ -47,12 +47,13 @@ public class FlightSearchResponseMapper {
 
     public static FlightSearchRequestDto toFlightSearchRequestDto(RouteAggregationDto route) {
         return FlightSearchRequestDto.builder()
-                .originLocationAirport(route.getRouteCode().split(":")[0])
-                .destinationLocationAirPort(route.getRouteCode().split(":")[1])
+                .originLocationAirport(route.getDepartureAirportCode())
+                .destinationLocationAirport(route.getArrivalAirport())
                 .departureDate(route.getDepartureDate())
-                .returnDate(route.getReturnDate())
+                .returnDate(route.getArrivalDate())
                 .travelClass(TravelClass.ECONOMY)
                 .adults(1)
+                .max(100)
                 .currencyCode("KRW")
                 .build();
     }
