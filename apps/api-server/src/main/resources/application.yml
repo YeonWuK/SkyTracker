@@ -1,15 +1,4 @@
 spring:
-  security:
-    oauth2:
-      client:
-        registration:
-          google:
-            client-id: ${GOOGLE_CLIENT_ID}
-            client-secret: ${GOOGLE_CLIENT_SECRET}
-            scope:
-              - email
-              - profile
-
   datasource:
     url: ${DB_URL}
     username: ${DB_USERNAME}
@@ -31,14 +20,8 @@ spring:
 
   data:
     redis:
-      cluster:
-        nodes:
-          - redis-node-1:6379
-          - redis-node-2:6379
-          - redis-node-3:6379
-          - redis-node-4:6379
-          - redis-node-5:6379
-          - redis-node-6:6379
+      host: ${REDIS_HOST:redis}
+      port: ${REDIS_PORT:6379}
 
 jwt:
   secret: ${JWT_SECRET}

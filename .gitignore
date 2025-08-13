@@ -43,3 +43,9 @@ infra/**/logstash/config/logstash.keystore
 ### VS Code ###
 .vscode/
 apps/api-server/.env
+
+# MySQL 및 Orchestrator 볼륨 데이터
+master/data/
+slave/data/
+orchestrator/sqlite-data/k8s/apps/app-secret.yaml
+k8s/apps/app-secret.yaml
