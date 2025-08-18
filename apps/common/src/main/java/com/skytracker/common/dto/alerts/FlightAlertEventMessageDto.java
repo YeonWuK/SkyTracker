@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 @Builder
 public class FlightAlertEventMessageDto {
     private Long userId;
+    private String email;
     private String departureAirport;
     private String arrivalAirport;
     private String departureDate;
