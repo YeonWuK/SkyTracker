@@ -1,6 +1,4 @@
 spring:
-  profiles:
-    active: prod
   kafka:
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
@@ -11,7 +9,4 @@ spring:
         partitioner.class: org.apache.kafka.clients.producer.internals.DefaultPartitioner
       client-id: kafka-producer
 
-#    bootstrap-servers:
-#      -
-#      -
-#      -
+    bootstrap-servers: my-cluster-kafka-bootstrap.kafka.svc.cluster.local:9092

@@ -1,4 +1,15 @@
 spring:
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ${GOOGLE_CLIENT_ID}
+            client-secret: ${GOOGLE_CLIENT_SECRET}
+            scope:
+              - email
+              - profile
+
   datasource:
     url: ${DB_URL}
     username: ${DB_USERNAME}
@@ -22,6 +33,7 @@ spring:
     redis:
       password: ${REDIS_PASSWORD}
       sentinel:
+        password: ${REDIS_PASSWORD}
         master: mymaster
         nodes:
           - my-redis-node-0.my-redis-headless.data.svc.cluster.local:26379

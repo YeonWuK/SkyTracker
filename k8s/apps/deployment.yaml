@@ -20,3 +20,9 @@ spec:
           envFrom:
             - secretRef:
                 name: app-secret
+          env:
+            - name: REDIS_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: my-redis
+                  key: redis-password
