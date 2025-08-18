@@ -1,9 +1,8 @@
 package com.skytracker.service;
 
-import com.skytracker.common.dto.alerts.FlightAlertEventMessageDto;
 import com.skytracker.common.dto.alerts.FlightAlertRequestDto;
 import com.skytracker.common.dto.alerts.FlightAlertResponseDto;
-import com.skytracker.core.service.AmadeusFlightSearchService;
+
 import com.skytracker.entity.FlightAlert;
 import com.skytracker.entity.User;
 import com.skytracker.entity.UserFlightAlert;
@@ -14,11 +13,9 @@ import com.skytracker.repository.UserFlightAlertRepository;
 import com.skytracker.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -32,9 +29,6 @@ public class PriceAlertService {
     private final FlightAlertRepository flightAlertRepository;
     private final UserFlightAlertRepository userFlightAlertRepository;
     private final UserRepository userRepository;
-
-    private final AmadeusTokenManger amadeusTokenManger;
-    private final AmadeusFlightSearchService amadeusFlightSearchService;
 
     public void register(FlightAlertRequestDto dto, Long userId){
         String uniqueKey = dto.buildUniqueKey();

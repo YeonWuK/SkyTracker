@@ -28,6 +28,7 @@ public class UserFlightAlertMapper {
     public static FlightAlertEventMessageDto from(UserFlightAlert userFlightAlert) {
         return FlightAlertEventMessageDto.builder()
                 .userId(userFlightAlert.getUser().getId())
+                .email(userFlightAlert.getUser().getEmail())
                 .departureAirport(userFlightAlert.getFlightAlert().getDepartureAirport())
                 .arrivalAirport(userFlightAlert.getFlightAlert().getArrivalAirport())
                 .departureDate(userFlightAlert.getFlightAlert().getDepartureDate())

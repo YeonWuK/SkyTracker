@@ -54,6 +54,7 @@ public class ProducerConfig {
 
         props.put(org.apache.kafka.clients.producer.ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServerString);
         props.put(org.apache.kafka.clients.producer.ProducerConfig.ACKS_CONFIG, "all");
+        props.put(org.apache.kafka.clients.producer.ProducerConfig.ENABLE_IDEMPOTENCE_CONFIG, true);
         props.put(org.apache.kafka.clients.producer.ProducerConfig.RETRIES_CONFIG, 3);
         props.put(org.apache.kafka.clients.producer.ProducerConfig.LINGER_MS_CONFIG, 5);
         props.put(org.apache.kafka.clients.producer.ProducerConfig.PARTITIONER_CLASS_CONFIG, RoundRobinPartitioner.class.getName());

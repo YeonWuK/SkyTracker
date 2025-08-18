@@ -7,7 +7,7 @@ include 'apps:core'
 //include 'apps:batch-server'
 //include 'apps:monitoring-server'
 include 'apps:kafka-producer'
-//include 'apps:kafka-consumer'
+include 'apps:price-alert'
 
 include 'infra:kafka'
 include 'infra:elk'

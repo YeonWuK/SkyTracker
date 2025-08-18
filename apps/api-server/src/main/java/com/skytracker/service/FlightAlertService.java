@@ -15,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,6 +23,7 @@ import java.util.List;
 @Service
 @Slf4j
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class FlightAlertService {
 
     private final RedisService redisService;
@@ -35,6 +37,7 @@ public class FlightAlertService {
      *  가격 변동 시 알림 메세지 발행 (3시간)
      */
     @Scheduled(cron = "0 0 */3 * * *")
+    @Transactional
     public void publishFlightAlerts() {
         List<FlightAlertEventMessageDto> alertEvents = checkPrice();
         alertEvents.forEach(flightAlertProducer::sendFlightAlert);
