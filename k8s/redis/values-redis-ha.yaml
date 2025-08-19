@@ -1,4 +1,5 @@
 architecture: replication
+fullnameOverride: redis
 
 auth:
   enabled: true
