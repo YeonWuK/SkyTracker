@@ -1,26 +1,57 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: $title$
+  name: elasticsearch-service
+  namespace: apps
   labels:
-    app: $title$
+    app: elasticsearch-service
 spec:
-  replicas: $1$
+  replicas: 1
   selector:
     matchLabels:
-      app: $title$
+      app: elasticsearch-service
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 0
+      maxSurge: 1
   template:
     metadata:
-      name: $title$
       labels:
-        app: $title$
+        app: elasticsearch-service
     spec:
       containers:
-        - name: $title$
-          image: $nginx$
-          imagePullPolicy: IfNotPresent
+        - name: elasticsearch-service
+          image: yeonwu/es-service:latest
+          imagePullPolicy: Always
           ports:
-            - containerPort: $80$
-              protocol: $TCP$
-      restartPolicy: Always
-      $END$
+            - containerPort: 8080
+          env:
+            - name: ELASTICSEARCH_URL
+              value: https://elastic-es-http.data.svc:9200
+            - name: ELASTIC_USERNAME
+              value: elastic
+            - name: ELASTIC_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: elastic-es-elastic-user
+                  key: elastic
+            - name: ES_CA_CERT_PATH
+              value: /etc/es/certs/ca.crt
+          envFrom:
+            - secretRef:
+                name: app-secret
+          volumeMounts:
+            - name: es-ca
+              mountPath: /etc/es/certs
+              readOnly: true
+          resources:
+            requests:
+              cpu: 100m
+              memory: 256Mi
+            limits:
+              memory: 512Mi
+      volumes:
+        - name: es-ca
+          secret:
+            secretName: elastic-es-http-certs-public

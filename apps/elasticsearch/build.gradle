@@ -24,6 +24,7 @@ repositories {
 }
 
 dependencies {
+
     implementation project(":apps:common")
     implementation project(':apps:core')
 
@@ -44,7 +45,6 @@ dependencies {
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
     implementation 'org.springframework.boot:spring-boot-starter'
-    testImplementation 'org.springframework.kafka:spring-kafka-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 
 }

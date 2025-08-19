@@ -1,0 +1,8 @@
+.git
+**/build
+**/.gradle
+**/out
+.gradle
+.idea
+*.iml
+Dockerfile
