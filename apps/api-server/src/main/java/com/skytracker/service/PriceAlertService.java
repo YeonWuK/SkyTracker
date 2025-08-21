@@ -2,7 +2,9 @@ package com.skytracker.service;
 
 import com.skytracker.common.dto.alerts.FlightAlertRequestDto;
 import com.skytracker.common.dto.alerts.FlightAlertResponseDto;
-import com.skytracker.core.service.AmadeusFlightSearchService;
+import com.skytracker.common.exception.AlertAlreadyRegisteredException;
+import com.skytracker.common.exception.FlightAlertNotFoundException;
+import com.skytracker.common.exception.UserNotFoundException;
 import com.skytracker.entity.FlightAlert;
 import com.skytracker.entity.User;
 import com.skytracker.entity.UserFlightAlert;
@@ -29,9 +31,6 @@ public class PriceAlertService {
     private final UserFlightAlertRepository userFlightAlertRepository;
     private final UserRepository userRepository;
 
-    private final AmadeusTokenManger amadeusTokenManger;
-    private final AmadeusFlightSearchService amadeusFlightSearchService;
-
     public void register(FlightAlertRequestDto dto, Long userId){
         String uniqueKey = dto.buildUniqueKey();
 
@@ -39,12 +38,12 @@ public class PriceAlertService {
                 .orElseGet(() -> flightAlertRepository.save(FlightAlertMapper.toEntity(dto)));
 
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("해당 User 를 찾을 수 없습니다."));
+                .orElseThrow(() -> new UserNotFoundException(userId));
 
         boolean alreadyRegistered = userFlightAlertRepository.existsByUserAndFlightAlert(user, flightAlert);
         if (alreadyRegistered) {
             log.info("중복 여부: {}", alreadyRegistered);
-            throw new IllegalStateException("이미 등록한 알림입니다.");
+            throw new AlertAlreadyRegisteredException();
         }
 
         UserFlightAlert userFlightAlert = UserFlightAlert.builder()
@@ -59,18 +58,19 @@ public class PriceAlertService {
 
     public void toggleAlert(Long userId, Long alertId) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+                .orElseThrow(() -> new UserNotFoundException(userId));
 
         UserFlightAlert alert = userFlightAlertRepository
                 .findByUserAndFlightAlertId(user, alertId)
-                        .orElseThrow(() -> new IllegalArgumentException("이미 삭제 됬거나, 해당 알림을 찾을 수 없습니다."));
+                        .orElseThrow(() -> new FlightAlertNotFoundException(alertId));
 
         alert.setActive(!alert.isActive());
     }
 
     public List<FlightAlertResponseDto> getUserFlightAlerts(Long userId) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+                .orElseThrow(() -> new UserNotFoundException(userId));
+
         return userFlightAlertRepository.findAllByUser(user).stream()
                 .map(UserFlightAlertMapper::toDto)
                 .collect(Collectors.toList());
@@ -79,10 +79,10 @@ public class PriceAlertService {
 
     public void deleteUserFlightAlert(Long userId, Long alertId) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+                .orElseThrow(() -> new UserNotFoundException(userId));
 
         UserFlightAlert alert = userFlightAlertRepository.findByUserAndFlightAlertId(user, alertId)
-                .orElseThrow(() -> new IllegalArgumentException("해당 알림을 찾을 수 없습니다."));
+                .orElseThrow(() -> new FlightAlertNotFoundException(alertId));
 
         userFlightAlertRepository.delete(alert);
         log.info("성공적으로 삭제되었습니다! {}", alertId);

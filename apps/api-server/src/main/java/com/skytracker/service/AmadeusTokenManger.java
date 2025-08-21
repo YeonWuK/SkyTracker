@@ -1,5 +1,7 @@
 package com.skytracker.service;
 
+import com.skytracker.common.exception.AmadeusTokenIssueException;
+import com.skytracker.common.exception.DistributedLockTimeoutException;
 import com.skytracker.core.constants.RedisKeys;
 import com.skytracker.core.service.RedisService;
 import lombok.RequiredArgsConstructor;
@@ -52,17 +54,18 @@ public class AmadeusTokenManger {
 
             ResponseEntity<Map> response = restTemplate.postForEntity(ACCESS_URL, request, Map.class);
 
-            if (response.getStatusCode().is2xxSuccessful()) {
-                String token = (String) response.getBody().get("access_token");
-                log.info("accessToken = {}", token);
-                redisService.setValueWithTTL(RedisKeys.AMADEUS_TOKEN, token, Duration.ofMinutes(30));
-                return token;
-            } else {
-                throw new RuntimeException("Failed to get access token");
+            if (!response.getStatusCode().is2xxSuccessful()) {
+                throw new AmadeusTokenIssueException("HTTP " + response.getStatusCode());
             }
+
+            String token = (String) response.getBody().get("access_token");
+            log.info("accessToken = {}", token);
+            redisService.setValueWithTTL(RedisKeys.AMADEUS_TOKEN, token, Duration.ofMinutes(30));
+            return token;
+
         } catch (Exception e) {
-            log.error("Get Amadeus Access Token 갱신 중 예외 실패", e);
-            throw new RuntimeException("Amadeus AccessToken 발급 중 예외 발생", e);
+            log.error("Amadeus Access Token 발급 실패", e);
+            throw new AmadeusTokenIssueException("Amadeus Access Token 발급 실패",e);
         }
     }
 
@@ -101,7 +104,7 @@ public class AmadeusTokenManger {
             }
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
-            throw new RuntimeException("Thread interrupted", e);
+            throw new DistributedLockTimeoutException("interrupted while waiting for token/lock");
         }
     }
 

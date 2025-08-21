@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.skytracker.common.dto.SearchContext;
 import com.skytracker.common.dto.alerts.FlightAlertRequestDto;
 import com.skytracker.common.dto.flightSearch.FlightSearchRequestDto;
+import com.skytracker.common.exception.FlightSearchException;
 import com.skytracker.core.utils.AmadeusResponseParser;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -46,9 +47,12 @@ public class AmadeusFlightSearchService {
                     );
 
             return parser.parseFlightSearchResponse(response.getBody(), ctx);
-        } catch (HttpServerErrorException e) {
+        }catch (HttpServerErrorException e) {
             log.error("Amadeus 서버 내부 오류: {}", e.getResponseBodyAsString());
-            throw new RuntimeException("현재 항공권 조회가 불가능합니다. 잠시 후 다시 시도해주세요.");
+            throw new FlightSearchException("Amadeus 서버 오류: " + e.getStatusCode(), e);
+        } catch (Exception e) {
+            log.error("항공권 검색 중 예외", e);
+            throw new FlightSearchException(e.getMessage(), e);
         }
     }
 

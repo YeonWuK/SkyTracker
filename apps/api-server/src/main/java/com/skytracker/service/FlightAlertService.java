@@ -29,7 +29,6 @@ public class FlightAlertService {
     private final AmadeusFlightSearchService amadeusFlightSearchService;
     private final FlightAlertProducer flightAlertProducer;
 
-
     /**
      *  가격 변동 시 알림 메세지 발행 (3시간)
      */
@@ -38,7 +37,6 @@ public class FlightAlertService {
         List<FlightAlertEventMessageDto> alertEvents = checkPrice();
         alertEvents.forEach(flightAlertProducer::sendFlightAlert);
     }
-
 
     /**
      * 가격 변동 체크
