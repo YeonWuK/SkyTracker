@@ -1,6 +1,5 @@
 package com.skytracker.kafkaproducer.config;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.producer.RoundRobinPartitioner;
 import org.springframework.beans.factory.annotation.Value;
 
@@ -10,6 +9,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.apache.kafka.common.serialization.StringSerializer;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.core.DefaultKafkaProducerFactory;
@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.Map;
 
 @Configuration
-@Slf4j
+@ConditionalOnProperty(prefix = "spring.kafka", name = "bootstrap-servers")
 public class ProducerConfig {
 
     @Value("${spring.kafka.bootstrap-servers}")
@@ -61,7 +61,6 @@ public class ProducerConfig {
         props.put(org.apache.kafka.clients.producer.ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
         props.put(org.apache.kafka.clients.producer.ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
         props.put(org.apache.kafka.clients.producer.ProducerConfig.CLIENT_ID_CONFIG, "kafka-producer");
-        props.put(JsonSerializer.ADD_TYPE_INFO_HEADERS, false);
 
         return props;
     }

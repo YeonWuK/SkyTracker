@@ -30,6 +30,7 @@ dependencies {
 	implementation project(':apps:kafka-producer')
 	implementation project(':apps:elasticsearch')
 	implementation project(':apps:price-alert')
+	implementation project(':apps:price-collector')
 
 
 	implementation 'com.querydsl:querydsl-jpa:5.0.0:jakarta'
@@ -42,7 +43,6 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
-
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
 
@@ -62,24 +62,6 @@ dependencies {
 
 tasks.named('test') {
 	useJUnitPlatform()
-}
-
-tasks.register('copyConfigs', Copy) {
-	// Kafka 설정 복사
-	from(project(":apps:kafka-producer").layout.projectDirectory.dir("src/main/resources")) {
-		include("application.yml")
-		rename("application.yml", "kafka-application.yml")
-	}
-	// Elasticsearch 설정 복사
-	from(project(":apps:elasticsearch").layout.projectDirectory.dir("src/main/resources")) {
-		include("application.yml")
-		rename("application.yml", "elasticsearch-application.yml")
-	}
-	into layout.projectDirectory.dir("src/main/resources")
-}
-
-tasks.named('processResources') {
-	dependsOn tasks.named('copyConfigs')
 }
 
 clean {

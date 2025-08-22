@@ -31,7 +31,7 @@ public class ElasticAggregationService {
    public List<EsAggregationDto> getTopRoutes(int size) {
       Aggregation topRouteAgg = Aggregation.of(a -> a
               .terms(t -> t
-                      .field("routeKey.keyword")
+                      .field("routeKey")
                       .size(size)));
 
       NativeQuery query = new NativeQueryBuilder()
@@ -61,13 +61,14 @@ public class ElasticAggregationService {
          String key = bucket.key().stringValue();
          ParsedRouteDto parsedRouteDto =  parsedRoute(key);
 
-         log.info("집계 결과 - routeKey: {}, docCount: {}, 출발지: {}, 도착지: {}, 출발일: {}, 귀국일: {}",
+         log.info("집계 결과 - routeKey: {}, docCount: {}, 출발지: {}, 도착지: {}, 출발일: {}, 귀국일: {}, 인원: {}",
                  key,
                  bucket.docCount(),
                  parsedRouteDto.getDepartureAirportCode(),
                  parsedRouteDto.getArrivalAirportCode(),
                  parsedRouteDto.getDepartureDate(),
-                 parsedRouteDto.getArrivalDate()
+                 parsedRouteDto.getArrivalDate(),
+                 parsedRouteDto.getAdults()
          );
          routes.add(EsAggregationDto.from(parsedRouteDto, bucket.docCount()));
       }
@@ -81,11 +82,12 @@ public class ElasticAggregationService {
       String routeCode     = parts.length > 0 ? parts[0] : "";
       String departureDate = parts.length > 1 ? parts[1] : "";
       String arrivalDate   = parts.length > 2 ? parts[2] : null;
+      int    adults        = parts.length > 2 ? Integer.parseInt(parts[parts.length - 1]) : 0;
 
       String[] airports = routeCode.split(":", -1);
       String departureAirportCode = airports.length > 0 ? airports[0] : "";
       String arrivalAirportCode   = airports.length > 1 ? airports[1] : "";
 
-      return new ParsedRouteDto(departureAirportCode, arrivalAirportCode, departureDate, arrivalDate);
+      return new ParsedRouteDto(departureAirportCode, arrivalAirportCode, departureDate, arrivalDate, adults);
    }
 }

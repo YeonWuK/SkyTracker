@@ -3,12 +3,3 @@ spring:
     uris: ${ES_URI}
     username: ${ES_USERNAME}
     password: ${ES_PASSWORD}
-
-
-  jpa:
-    hibernate:
-      ddl-auto: update
-    show-sql: true
-    properties:
-      hibernate:
-        format_sql: true

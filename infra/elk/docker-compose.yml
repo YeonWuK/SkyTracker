@@ -9,11 +9,9 @@ services:
     environment:
       - discovery.type=single-node
       - ES_JAVA_OPTS=-Xms2g -Xmx2g
-      - ELASTIC_PASSWORD=${ES_PASSWORD}
-      - KIBANA_PASSWORD=${KIBANA_PASSWORD}
     volumes:
       - es-data:/usr/share/elasticsearch/data
-      - ./elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro
+      - ./elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
     networks:
       - elk-net
     env_file:
@@ -32,7 +30,7 @@ services:
     environment:
       - LOGSTASH_JAVA_OPTS=-Xms512m -Xmx512m
     volumes:
-      - ./logstash/config/logstash.yml:/usr/share/logstash/config/logstash.yml:ro
+      - ./logstash/config/logstash.yml:/usr/share/logstash/config/logstash.yml
       - ./logstash/pipeline/conf.d:/usr/share/logstash/pipeline
     depends_on:
       elasticsearch:
@@ -58,8 +56,6 @@ services:
     container_name: kibana
     environment:
       - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
-      - ELASTICSEARCH_USERNAME=${KIBANA_USERNAME}
-      - ELASTICSEARCH_PASSWORD=${KIBANA_PASSWORD}
     depends_on:
       elasticsearch:
         condition: service_healthy

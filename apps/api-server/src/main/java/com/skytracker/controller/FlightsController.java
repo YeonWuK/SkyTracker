@@ -22,11 +22,13 @@ public class FlightsController {
     private final AmadeusFlightSearchService flightSearchService;
     private final AmadeusTokenManger amadeusService;
     private final SearchLogService searchLogService;
+    private final RouteAggregationService routeAggregationService;
 
     @PostMapping("/search")
     public ResponseEntity<?> searchFlights(@RequestBody @Valid FlightSearchRequestDto dto) {
         try {
             searchLogService.publishSearchLog(dto);
+            routeAggregationService.updateHotRoutes();
             String token = amadeusService.getAmadeusAccessToken();
             List<?> results = flightSearchService.searchFlights(token, dto);
             return ResponseEntity.ok().body(results);
