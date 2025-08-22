@@ -1,8 +1,4 @@
 spring:
-  config:
-    import:
-      - classpath:kafka-application.yml
-      - classpath:elasticsearch-application.yml
   security:
     oauth2:
       client:

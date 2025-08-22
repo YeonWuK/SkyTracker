@@ -6,11 +6,11 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class FlightPriceUpdateProducer {
+public class TicketUpdateProducer {
 
     private final KafkaTemplate<String, Object> kafkaTemplate;
 
-        public void sendPriceUpdate(Object responseDto) {
+        public void sendTicketUpdate(Object responseDto) {
         kafkaTemplate.send("flight-ticket-update", responseDto);
     }
 }

@@ -16,6 +16,7 @@ public class SearchLogDto {
     private String destinationLocationCode;
     private String departureDate;
     private String returnDate;
+    private int adults;
 
     public static SearchLogDto from(FlightSearchRequestDto dto) {
         return SearchLogDto.builder()
@@ -23,6 +24,7 @@ public class SearchLogDto {
                 .destinationLocationCode(dto.getDestinationLocationAirport())
                 .departureDate(dto.getDepartureDate())
                 .returnDate(dto.getReturnDate())
+                .adults(dto.getAdults())
                 .build();
     }
 }

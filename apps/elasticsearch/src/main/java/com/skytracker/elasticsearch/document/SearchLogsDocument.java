@@ -31,4 +31,10 @@ public class SearchLogsDocument {
 
     @Field(type = FieldType.Date, format = DateFormat.date)
     private LocalDate returnDate;
+
+    @Field(type = FieldType.Keyword)
+    private int adults;
+
+    @Field(type = FieldType.Keyword)
+    private String routeKey;
 }

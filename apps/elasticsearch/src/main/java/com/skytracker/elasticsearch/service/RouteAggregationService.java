@@ -1,7 +1,6 @@
 package com.skytracker.elasticsearch.service;
 
 import com.skytracker.elasticsearch.dto.EsAggregationDto;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.skytracker.core.constants.RedisKeys;
 import com.skytracker.core.service.RedisService;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +18,6 @@ public class RouteAggregationService {
 
     private final ElasticAggregationService esAggregationService;
     private final RedisService redisService;
-    private final ObjectMapper objectMapper;
 
     @Scheduled(cron = "0 0 1 * * *")
     public void updateHotRoutes() {
@@ -29,9 +27,14 @@ public class RouteAggregationService {
 
             redisService.delete(RedisKeys.HOT_ROUTES_TMP);
 
+            int rank = 1;
             for (EsAggregationDto route : topRoutes) {
-                String json = objectMapper.writeValueAsString(route);
-                redisService.pushList(RedisKeys.HOT_ROUTES_TMP, json);
+                String redisKey = RedisKeys.HOT_ROUTES_TMP;
+                String field = RedisKeys.HOT_ROUTES + ":" + rank;
+                String value = buildValue(route);
+
+                redisService.hashPut(redisKey, field, value);
+                rank++;
             }
 
             redisService.rename(RedisKeys.HOT_ROUTES_TMP, RedisKeys.HOT_ROUTES);
@@ -40,5 +43,14 @@ public class RouteAggregationService {
         } catch (Exception e) {
             log.error("인기 노선 캐싱 실패", e);
         }
+    }
+
+    private String buildValue(EsAggregationDto dto) {
+        if (dto.getArrivalDate() == null) {
+            return dto.getDepartureAirportCode() + "_" + dto.getArrivalAirport()
+                    + "_" + dto.getDepartureDate() + "_" + dto.getAdults()  + "_" + dto.getDocCount();
+        }
+        return dto.getDepartureAirportCode() + "_" + dto.getArrivalAirport()
+                + "_" + dto.getDepartureDate() + "_" + dto.getArrivalDate() + "_" + dto.getAdults() + "_" + dto.getDocCount();
     }
 }

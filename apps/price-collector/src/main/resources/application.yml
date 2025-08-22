@@ -1,0 +1,24 @@
+spring:
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS}
+    client-id: price-collector
+
+    consumer:
+      enable-auto-commit: false
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+
+      properties:
+        spring.json.trusted.packages: "*"
+        partition.assignment.strategy: org.apache.kafka.clients.consumer.CooperativeStickyAssignor
+        heartbeat.interval.ms: 3000
+        session.timeout.ms: 10000
+      max-poll-records: 30
+
+
+    listener:
+      type: batch
+      ack-mode: manual_immediate
+      concurrency: 3
+      poll-timeout: 3s

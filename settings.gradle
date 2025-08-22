@@ -8,6 +8,7 @@ include 'apps:core'
 //include 'apps:monitoring-server'
 include 'apps:kafka-producer'
 include 'apps:price-alert'
+include 'apps:price-collector'
 
 include 'infra:kafka'
 include 'infra:elk'

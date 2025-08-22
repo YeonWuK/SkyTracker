@@ -3,8 +3,9 @@ package com.skytracker.pricealert.config;
 import com.skytracker.pricealert.config.handler.ConsumerErrorsHandler;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.CooperativeStickyAssignor;
-import org.apache.kafka.common.serialization.StringSerializer;
+import org.apache.kafka.common.serialization.StringDeserializer;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
@@ -21,9 +22,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Configuration
-public class KafkaConsumerConfig {
+public class PriceAlertConsumerConfig {
 
-    @Value("${KAFKA_BROKER_SERVERS}")
+    @Value("${spring.kafka.bootstrap-servers}")
     private String bootstrapServers;
 
     @Bean
@@ -33,18 +34,17 @@ public class KafkaConsumerConfig {
 
         Map<String, Object> props = new HashMap<>();
         props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
-        props.put(ConsumerConfig.CLIENT_ID_CONFIG, "kafka-consumer");
-        props.put(ConsumerConfig.GROUP_ID_CONFIG, "price-alert");
+        props.put(ConsumerConfig.CLIENT_ID_CONFIG, "price-alert");
+        props.put(ConsumerConfig.GROUP_ID_CONFIG, "price-alert-group");
         props.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, false);
         props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "latest");
-        props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringSerializer.class);
+        props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
         props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, deserializer);
         props.put(ConsumerConfig.PARTITION_ASSIGNMENT_STRATEGY_CONFIG, CooperativeStickyAssignor.class.getName());
         props.put(ConsumerConfig.HEARTBEAT_INTERVAL_MS_CONFIG, 3000);
         props.put(ConsumerConfig.SESSION_TIMEOUT_MS_CONFIG, 10000);
-        props.put(ConsumerConfig.MAX_POLL_RECORDS_CONFIG, 1);
 
-        return new DefaultKafkaConsumerFactory<>(props);
+        return new DefaultKafkaConsumerFactory<>(props, new StringDeserializer(), deserializer);
     }
 
     @Bean
@@ -53,11 +53,8 @@ public class KafkaConsumerConfig {
                 new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConsumerFactory(consumerFactory());
 
-        factory.setBatchListener(true);
         factory.getContainerProperties().setAckMode(ContainerProperties.AckMode.MANUAL_IMMEDIATE);
-        factory.setConcurrency(3);
         factory.getContainerProperties().setPollTimeout(3);
-        factory.setAutoStartup(false);
 
         return factory;
     }
@@ -67,9 +64,9 @@ public class KafkaConsumerConfig {
             return RetryTopicConfigurationBuilder
                     .newInstance()
                     .includeTopic("flight-alert")
-                    .autoCreateTopicsWith(KafkaConsumerProperties.REPLICATION_FACTOR, KafkaConsumerProperties.REPLICA_COUNT)
-                    .maxAttempts(KafkaConsumerProperties.MAX_ATTEMPT_COUNT)
-                    .fixedBackOff(KafkaConsumerProperties.BACKOFF_PERIOD)
+                    .autoCreateTopicsWith(PriceAlertConsumerProperties.REPLICATION_FACTOR, PriceAlertConsumerProperties.REPLICA_COUNT)
+                    .maxAttempts(PriceAlertConsumerProperties.MAX_ATTEMPT_COUNT)
+                    .fixedBackOff(PriceAlertConsumerProperties.BACKOFF_PERIOD)
                     .listenerFactory(kafkaListenerContainerFactory())
                     .dltSuffix(".DLT")
                     .dltHandlerMethod(new EndpointHandlerMethod(ConsumerErrorsHandler.class, "postProcessDltMessage"))

@@ -20,7 +20,7 @@ public class SearchLogService {
             searchLogsProducer.sendSearchLogs(searchLogDto);// Kafka 발행
             log.info("search logs publish succeed: {} → {}", req.getOriginLocationAirport(), req.getDestinationLocationAirport());
         } catch (Exception e) {
-            log.error("search logs published failed", e);
+            throw new IllegalStateException("search logs publish failed: " + e.getMessage());
         }
     }
 }
