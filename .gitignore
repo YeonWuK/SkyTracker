@@ -48,3 +48,9 @@ apps/api-server/.env
 /.env
 # build artifacts
 *.jar
+
+# build artifacts
+*.jar
+build/
+out/
+target/
