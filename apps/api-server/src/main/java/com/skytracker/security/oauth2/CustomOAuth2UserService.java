@@ -39,6 +39,8 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     private Oauth2UserInfo getOauth2UserInfo(String registrationId, Map<String, Object> userAttributes) {
         if ("google".equals(registrationId)) {
             return new GoogleUserInfo(userAttributes);
+        } else if ("kakao".equals(registrationId)) {
+            return new KakaoUserInfo(userAttributes);
         }
         throw new OAuth2AuthenticationException("Unsupported provider: " + registrationId);
     }
