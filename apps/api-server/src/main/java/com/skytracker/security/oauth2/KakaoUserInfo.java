@@ -15,8 +15,6 @@ public class KakaoUserInfo implements Oauth2UserInfo {
 
     @Override
     public String getProviderId() {
-        log.info("attributes: {}", attributes);
-        log.info("id: {}", attributes.get("id"));
         return attributes.get("id").toString();
     }
 
@@ -29,7 +27,6 @@ public class KakaoUserInfo implements Oauth2UserInfo {
     public String getEmail() {
         Map<String, Object> kakaoAccount = getAccount(attributes);
 
-        log.info("email: {}", kakaoAccount.get("email"));
         return (String) kakaoAccount.get("email");
     }
 
@@ -37,9 +34,6 @@ public class KakaoUserInfo implements Oauth2UserInfo {
     public String getName() {
         Map<String, Object> kakaoAccount = getAccount(attributes);
         Map<String, Object> profile = getProfile(kakaoAccount);
-
-        log.info("profile: {}", profile);
-        log.info("profile: {}", profile.get("nickname"));
 
         return (String) profile.get("nickname");
     }
