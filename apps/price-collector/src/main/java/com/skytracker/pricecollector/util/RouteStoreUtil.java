@@ -41,25 +41,19 @@ public class RouteStoreUtil {
                 continue;
             }
 
-            int price = responseDto.getTotalPrice();
             String json = objectMapper.writeValueAsString(responseDto);
 
             redisClient.kafkaPushList(key, json);
             log.info("HOT ROUTE 저장 성공: {}", key);
-
-            Integer minPrice = minPriceMap.get(key);
-            if (minPrice == null || price < minPrice) {
-                minPriceMap.put(key, price);
-            }
         }
 
-        minPriceMap.forEach((key, value) -> {
-            String minPriceKey = key + ":minPrice";
-            Integer currentMinPrice = redisClient.getminPrice(minPriceKey);
-            if (currentMinPrice == null || value < currentMinPrice) {
-                redisClient.setValueWithTTL(minPriceKey, String.valueOf(value), Duration.ofMinutes(9));
-            }
-        });
+//        minPriceMap.forEach((key, value) -> {
+//            String minPriceKey = key + ":minPrice";
+//            Integer currentMinPrice = redisClient.getminPrice(minPriceKey);
+//            if (currentMinPrice == null || value < currentMinPrice) {
+//                redisClient.setValueWithTTL(minPriceKey, String.valueOf(value), Duration.ofMinutes(9));
+//            }
+//        });
     }
 
     private String getRouteKey(SortedRouteDto dto) {

@@ -1,6 +1,9 @@
 package com.skytracker.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.skytracker.common.dto.HotRouteSummaryDto;
+import com.skytracker.common.dto.flightSearch.FlightSearchResponseDto;
 import com.skytracker.core.constants.RedisKeys;
 import com.skytracker.core.service.RedisClient;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +20,7 @@ import java.util.List;
 public class HotRankingService {
 
     private final RedisClient redisClient;
+    private final ObjectMapper objectMapper;
 
     public List<HotRouteSummaryDto> getHotRouteSummary() {
         List<String> keys = redisClient.getList(RedisKeys.HOT_ROUTES);
@@ -40,7 +44,7 @@ public class HotRankingService {
         return result;
     }
 
-    private HotRouteSummaryDto parseUniqueKey(String key, int rank) {
+    private HotRouteSummaryDto parseUniqueKey(String key, int rank) throws JsonProcessingException {
 
         String[] parts = key.split(":");
 
@@ -48,8 +52,7 @@ public class HotRankingService {
             throw new IllegalArgumentException("Invalid key format: " + key);
         }
 
-        String minPriceKey = key + ":minPrice";
-        Integer minPrice = redisClient.getminPrice(minPriceKey);
+        Integer minPrice = getMinPrice(key);
 
         String departureAirport = parts[0];
         String arrivalAirport = parts[1];
@@ -69,6 +72,24 @@ public class HotRankingService {
                 .adults(adults)
                 .minPrice(minPrice)
                 .build();
+    }
+
+    private Integer getMinPrice(String routeKey) throws JsonProcessingException {
+
+        List<String> hotRouteList = redisClient.getList(routeKey);
+
+        Integer minPrice = null;
+
+        for (String hotRoute : hotRouteList) {
+            FlightSearchResponseDto dto =
+                    objectMapper.readValue(hotRoute, FlightSearchResponseDto.class);
+
+            int price = dto.getTotalPrice();
+            if (minPrice == null || price < minPrice) {
+                minPrice = price;
+            }
+        }
+        return minPrice;
     }
 }
 

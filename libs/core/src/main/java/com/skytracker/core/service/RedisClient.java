@@ -24,6 +24,7 @@ public class RedisClient {
 
     public void pushList(String key, String json) {
         redisTemplate.opsForList().rightPush(key, json);
+        redisTemplate.opsForList().trim(key, -10, -1);
     }
 
     public List<String> getList(String key) {
