@@ -31,7 +31,7 @@ public class RouteStoreUtil {
             return;
         }
 
-        Map<String, Integer> minPriceMap = new HashMap<>();
+//        Map<String, Integer> minPriceMap = new HashMap<>();
 
         for (FlightSearchResponseDto responseDto : dtoList) {
 
