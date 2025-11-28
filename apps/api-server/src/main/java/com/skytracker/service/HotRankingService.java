@@ -42,13 +42,14 @@ public class HotRankingService {
 
     private HotRouteSummaryDto parseUniqueKey(String key, int rank) {
 
-        int minPrice = redisClient.getminPrice(key);
-
         String[] parts = key.split(":");
 
         if (parts.length < 4 || parts.length > 5) {
             throw new IllegalArgumentException("Invalid key format: " + key);
         }
+
+        String minPriceKey = key + ":minPrice";
+        Integer minPrice = redisClient.getminPrice(minPriceKey);
 
         String departureAirport = parts[0];
         String arrivalAirport = parts[1];
