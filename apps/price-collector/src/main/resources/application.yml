@@ -16,8 +16,8 @@ spring:
         spring.json.value.default.type: com.skytracker.common.dto.flightSearch.FlightSearchResponseDto
 
         partition.assignment.strategy: org.apache.kafka.clients.consumer.CooperativeStickyAssignor
-        heartbeat.interval.ms: 3000
-        session.timeout.ms: 10000
+        heartbeat.interval.ms: 5000
+        session.timeout.ms: 30000
 
         isolation.level: read_committed
 

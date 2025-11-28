@@ -43,8 +43,8 @@ public class PriceAlertConsumerConfig {
         props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
         props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, deserializer);
         props.put(ConsumerConfig.PARTITION_ASSIGNMENT_STRATEGY_CONFIG, CooperativeStickyAssignor.class.getName());
-        props.put(ConsumerConfig.HEARTBEAT_INTERVAL_MS_CONFIG, 3000);
-        props.put(ConsumerConfig.SESSION_TIMEOUT_MS_CONFIG, 10000);
+        props.put(ConsumerConfig.HEARTBEAT_INTERVAL_MS_CONFIG, 5000);
+        props.put(ConsumerConfig.SESSION_TIMEOUT_MS_CONFIG, 30000);
 
         return new DefaultKafkaConsumerFactory<>(props, new StringDeserializer(), deserializer);
     }
