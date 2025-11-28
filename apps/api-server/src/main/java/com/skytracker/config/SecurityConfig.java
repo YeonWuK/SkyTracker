@@ -25,12 +25,11 @@ public class  SecurityConfig{
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
         http.csrf(AbstractHttpConfigurer::disable)
-                .formLogin(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers( "/oauth2/**", "/login/oauth2/**",
                                 "/api/flights/search", "/api/flights/hot-routes"
                                 ,"/api/user/refresh-token","/login/oauth2/code/**",
-                                "/oauth2/callback/**","/").permitAll()
+                                "/oauth2/callback/**","/","/login").permitAll()
                         .anyRequest().authenticated()
                 )
                 .oauth2Login(oauth2 -> oauth2
