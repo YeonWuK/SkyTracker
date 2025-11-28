@@ -59,7 +59,7 @@ public class RedisClient {
 
     public void kafkaPushList(String key, String json) {
         redisTemplate.opsForList().rightPush(key, json);
-        redisTemplate.expire(key, Duration.ofMinutes(9));
+        redisTemplate.expire(key, Duration.ofMinutes(10));
     }
 
     public Integer getminPrice(String key) {
