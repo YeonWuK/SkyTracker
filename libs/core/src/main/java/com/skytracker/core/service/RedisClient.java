@@ -59,6 +59,7 @@ public class RedisClient {
 
     public void kafkaPushList(String key, String json) {
         redisTemplate.opsForList().rightPush(key, json);
+        redisTemplate.opsForList().trim(key, -20, -1);
         redisTemplate.expire(key, Duration.ofMinutes(10));
     }
 
