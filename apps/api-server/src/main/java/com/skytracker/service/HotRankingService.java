@@ -87,6 +87,7 @@ public class HotRankingService {
             int price = dto.getTotalPrice();
             if (minPrice == null || price < minPrice) {
                 minPrice = price;
+                log.info("해당 항공편 {} 최저가: {}", hotRoute, dto);
             }
         }
         return minPrice;
