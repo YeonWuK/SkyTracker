@@ -72,9 +72,16 @@ public class PriceAlertService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException(userId));
 
-        return userFlightAlertRepository.findAllByUser(user).stream()
+        List<FlightAlertResponseDto> result = userFlightAlertRepository.findAllByUser(user).stream()
                 .map(UserFlightAlertMapper::toDto)
                 .collect(Collectors.toList());
+
+        result.forEach(dto ->
+                log.info("FlightAlertResponseDto alertId={}, lastCheckedPrice={}",
+                        dto.getAlertId(), dto.getLastCheckedPrice())
+        );
+
+        return result;
     }
 
     public void deleteUserFlightAlert(Long userId, Long alertId) {

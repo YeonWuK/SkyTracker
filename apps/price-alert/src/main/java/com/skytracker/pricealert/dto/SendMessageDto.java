@@ -27,7 +27,7 @@ public class SendMessageDto {
                         "<p>도착지: <b>" + eventMessageDto.getArrivalAirport() + "</b></p>" +
                         "<p>출발일: <b>" + eventMessageDto.getDepartureDate() + "</b></p>" +
                         (eventMessageDto.getArrivalDate() != null ? "<p>귀국일: <b>" + eventMessageDto.getArrivalDate() + "</b></p>" : "") +
-                        "<p>해당 날짜 최저가<span style='color:red;font-weight:bold;'>" + eventMessageDto.getLastCheckedPrice() + "원</span></p>" +
+                        "<p>해당 날짜 최저가: <span style='color:red;font-weight:bold;'>" + eventMessageDto.getLastCheckedPrice() + "원</span></p>" +
                         "<br/>" +
                         "<p>SkyTracker 서비스에서 확인하세요!</p>";
 
