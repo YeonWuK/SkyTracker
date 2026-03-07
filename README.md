@@ -1,48 +1,106 @@
-
 ⸻
 
 ✈️ SkyTracker
 
-항공권을 더 빠르고, 더 똑똑하게 찾을 수 있도록 돕는 항공권 가격 추적 서비스
-실시간 항공권 데이터 기반 알림 및 검색 기능 제공
+Real-time Flight Price Tracking & Popular Route Analytics
+
+SkyTracker는 항공권 가격 변동을 자동으로 추적하고 인기 노선을 분석하여 사용자에게 효율적인 항공권 정보를 제공하는 서비스입니다.
+
+사용자가 반복적으로 검색하지 않아도 가격 변동을 모니터링하고 알림을 제공하며,
+검색 데이터를 분석하여 인기 노선 트렌드 정보를 제공합니다.
+
+또한 실제 검색 로그 분석을 기반으로 Pareto 법칙(80/20) 전략을 적용하여
+상위 인기 노선 중심으로 데이터 캐싱 및 분석 시스템을 설계했습니다.
 
 ⸻
 
-📌 프로젝트 개요
 
-SkyTracker는 사용자가 직접 여러 번 검색하지 않아도
-특정 항공권의 가격 하락과 인기 노선을 빠르게 파악할 수 있도록 지원합니다.
-항공권 데이터는 수시로 변동되며, 이를 실시간으로 파악하는 것은 비용적/기술적으로 비효율적이라는 문제를 해결하고자 했습니다.  ￼
+🛠 Tech Stack
 
-이를 위해
-	•	Pareto 법칙 기반 Top10 인기 노선 분석
-	•	Redis 기반 캐싱
-	•	Kafka 기반 비동기 데이터 수집
-등을 설계하여 항공권 검색 효율성과 사용자 경험을 높였습니다.  ￼
+$$
+\begin{array}{l}
+\small\textbf{\color{#808080}[ Backend ]} \
+\quad \large\text{Java 17, Spring Boot, Spring Data JPA, QueryDSL, Kafka} \[10pt]
 
-⸻
+\small\textbf{\color{#808080}[ Database & Cache ]} \
+\quad \large\text{MySQL, Redis Sentinel} \[10pt]
 
-아키텍처 
+\small\textbf{\color{#808080}[ Search & Logging (ELK) ]} \
+\quad \large\text{Elasticsearch, Logstash, Kibana} \[10pt]
 
-<img width="1482" height="932" alt="image" src="https://github.com/user-attachments/assets/d28d0de9-651a-4c6a-8e40-04c9ea1ee08c" />
+\small\textbf{\color{#808080}[ Infra & DevOps ]} \
+\quad \large\text{AWS EKS, Docker, Kubernetes(HPA), Nginx Ingress, GitHub Actions} \[10pt]
 
-아키텍처 구성은 다음과 같습니다. (Spring Boot 3개 서비스 + Kafka + Redis + MySQL + ElasticSearch)
-Kubernetes 기반 클러스터에서 구성, NGINX Ingress 적용
-데이터 수집 → Kafka → 저장 → API 서버에서 제공
-
-⸻
-
-ERD
-
-<img width="1928" height="1312" alt="image" src="https://github.com/user-attachments/assets/5930de0b-509a-4441-a242-eb1317f20902" />
+\small\textbf{\color{#808080}[ Others ]} \
+\quad \large\text{OpenAI API (GPT), OAuth 2.0}
+\end{array}
+$$
 
 ⸻
 
-✨ 핵심 기능
-	•	항공권 조건 검색 (출발/도착지, 날짜, 좌석 등)
-	•	알림 등록 및 이메일 수신
-	•	인기 노선 Top10 가격 트렌드 제공
-	•	검색한 항공권 가격 알림 등록/해제
-	•	GPT 기반 항공권 추천 챗봇
-	•	Oauth2 기반 소셜 로그인 + 이메일 알림 발송  ￼
+🏗 System Architecture
 
+SkyTracker는 MSA (Microservice Architecture) 기반으로 설계되었습니다.
+
+Architecture
+<img width="1482" height="932" alt="architecture" src="https://github.com/user-attachments/assets/d28d0de9-651a-4c6a-8e40-04c9ea1ee08c" />
+Architecture Overview
+	•	Spring Boot 기반 3개의 마이크로서비스 구성
+	•	Kafka 기반 비동기 이벤트 처리
+	•	Redis / MySQL / Elasticsearch 데이터 저장 구조
+	•	Kubernetes 기반 클러스터 환경
+	•	NGINX Ingress를 통한 트래픽 라우팅
+
+
+⸻
+
+📊 Search Data Aggregation
+
+사용자의 검색 데이터를 분석하여 Hot Route Top10 인기 노선을 제공합니다.
+
+구현 방식
+	•	Elasticsearch 집계 쿼리 활용
+	•	Spring Scheduler 기반 매일 00:00 인기 노선 집계
+	•	집계 결과를 Redis 캐싱
+
+결과적으로
+	•	빠른 인기 노선 조회
+	•	트렌드 기반 항공권 탐색 기능 제공
+
+⸻
+
+☸ Kubernetes Infrastructure (AWS EKS)
+
+서비스 인프라는 AWS EKS 기반 Kubernetes 클러스터에서 운영됩니다.
+
+직접 구축 및 운영 경험
+	•	Kubernetes Deployment / Service 구성
+	•	NGINX Ingress Controller 기반 트래픽 라우팅
+	•	HPA(Horizontal Pod Autoscaler) 기반 자동 스케일링
+	•	Self-Healing 구조 운영
+
+또한 운영 과정에서
+	•	Kubernetes Service Networking
+	•	Ingress Inbound / Outbound 설정
+	•	AWS IAM 권한 정책
+
+등 실제 인프라 문제를 직접 해결했습니다.
+
+⸻
+
+
+🗄 ERD
+<img width="1928" height="1312" alt="erd" src="https://github.com/user-attachments/assets/5930de0b-509a-4441-a242-eb1317f20902" />
+
+
+
+⸻
+
+🚀 Engineering Highlights
+	•	Kafka 기반 비동기 데이터 파이프라인 구축
+	•	Elasticsearch 기반 검색 데이터 집계 시스템 구현
+	•	AWS EKS 기반 Kubernetes 인프라 구축 및 운영
+	•	Redis Sentinel 기반 고가용성 캐시 구조 구현
+	•	Redis Cache 전략을 통한 검색 응답 속도 10배 개선
+
+⸻
