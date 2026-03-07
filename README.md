@@ -17,24 +17,20 @@ SkyTracker는 항공권 가격 변동을 자동으로 추적하고 인기 노선
 
 🛠 Tech Stack
 
-$$
-\begin{array}{l}
-\small\textbf{\color{#808080}[ Backend ]} \
-\quad \large\text{Java 17, Spring Boot, Spring Data JPA, QueryDSL, Kafka} \[10pt]
+Backend <br>
+Java 17, Spring Boot, Spring Data JPA, QueryDSL, Kafka
 
-\small\textbf{\color{#808080}[ Database & Cache ]} \
-\quad \large\text{MySQL, Redis Sentinel} \[10pt]
+Database & Cache<br>
+MySQL, Redis Sentinel
 
-\small\textbf{\color{#808080}[ Search & Logging (ELK) ]} \
-\quad \large\text{Elasticsearch, Logstash, Kibana} \[10pt]
+Search & Logging<br>
+Elasticsearch, Logstash, Kibana (ELK)
 
-\small\textbf{\color{#808080}[ Infra & DevOps ]} \
-\quad \large\text{AWS EKS, Docker, Kubernetes(HPA), Nginx Ingress, GitHub Actions} \[10pt]
+Infra & DevOps<br>
+AWS EKS, Docker, Kubernetes, Nginx Ingress, GitHub Actions
 
-\small\textbf{\color{#808080}[ Others ]} \
-\quad \large\text{OpenAI API (GPT), OAuth 2.0}
-\end{array}
-$$
+Others<br>
+OpenAI API (GPT), OAuth2
 
 ⸻
 
@@ -45,11 +41,11 @@ SkyTracker는 MSA (Microservice Architecture) 기반으로 설계되었습니다
 Architecture
 <img width="1482" height="932" alt="architecture" src="https://github.com/user-attachments/assets/d28d0de9-651a-4c6a-8e40-04c9ea1ee08c" />
 Architecture Overview
-	•	Spring Boot 기반 3개의 마이크로서비스 구성
-	•	Kafka 기반 비동기 이벤트 처리
-	•	Redis / MySQL / Elasticsearch 데이터 저장 구조
-	•	Kubernetes 기반 클러스터 환경
-	•	NGINX Ingress를 통한 트래픽 라우팅
+	•	Spring Boot 기반 3개의 마이크로서비스 구성 <br> 
+	•	Kafka 기반 비동기 이벤트 처리 <br>
+	•	Redis / MySQL / Elasticsearch 데이터 저장 구조 <br>
+	•	Kubernetes 기반 클러스터 환경 <br>
+	•	NGINX Ingress를 통한 트래픽 라우팅 <br>
 
 
 ⸻
@@ -59,13 +55,13 @@ Architecture Overview
 사용자의 검색 데이터를 분석하여 Hot Route Top10 인기 노선을 제공합니다.
 
 구현 방식
-	•	Elasticsearch 집계 쿼리 활용
-	•	Spring Scheduler 기반 매일 00:00 인기 노선 집계
-	•	집계 결과를 Redis 캐싱
+	•	Elasticsearch 집계 쿼리 활용 <br>
+	•	Spring Scheduler 기반 매일 00:00 인기 노선 집계 <br>
+	•	집계 결과를 Redis 캐싱 <br>
 
 결과적으로
-	•	빠른 인기 노선 조회
-	•	트렌드 기반 항공권 탐색 기능 제공
+	•	빠른 인기 노선 조회 <br>
+	•	트렌드 기반 항공권 탐색 기능 제공 <br>
 
 ⸻
 
@@ -74,15 +70,15 @@ Architecture Overview
 서비스 인프라는 AWS EKS 기반 Kubernetes 클러스터에서 운영됩니다.
 
 직접 구축 및 운영 경험
-	•	Kubernetes Deployment / Service 구성
-	•	NGINX Ingress Controller 기반 트래픽 라우팅
-	•	HPA(Horizontal Pod Autoscaler) 기반 자동 스케일링
-	•	Self-Healing 구조 운영
+	•	Kubernetes Deployment / Service 구성 <br>
+	•	NGINX Ingress Controller 기반 트래픽 라우팅 <br>
+	•	HPA(Horizontal Pod Autoscaler) 기반 자동 스케일링 <br>
+	•	Self-Healing 구조 운영 <br>
 
 또한 운영 과정에서
-	•	Kubernetes Service Networking
-	•	Ingress Inbound / Outbound 설정
-	•	AWS IAM 권한 정책
+	•	Kubernetes Service Networking <br>
+	•	Ingress Inbound / Outbound 설정 <br>
+	•	AWS IAM 권한 정책 <br>
 
 등 실제 인프라 문제를 직접 해결했습니다.
 
@@ -97,10 +93,10 @@ Architecture Overview
 ⸻
 
 🚀 Engineering Highlights
-	•	Kafka 기반 비동기 데이터 파이프라인 구축
-	•	Elasticsearch 기반 검색 데이터 집계 시스템 구현
-	•	AWS EKS 기반 Kubernetes 인프라 구축 및 운영
-	•	Redis Sentinel 기반 고가용성 캐시 구조 구현
-	•	Redis Cache 전략을 통한 검색 응답 속도 10배 개선
+	•	Kafka 기반 비동기 데이터 파이프라인 구축 <br>
+	•	Elasticsearch 기반 검색 데이터 집계 시스템 구현 <br>
+	•	AWS EKS 기반 Kubernetes 인프라 구축 및 운영 <br>
+	•	Redis Sentinel 기반 고가용성 캐시 구조 구현 <br> 
+	•	Redis Cache 전략을 통한 검색 응답 속도 10배 개선 <br>
 
 ⸻
