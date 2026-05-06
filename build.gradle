@@ -1,3 +1,8 @@
+plugins {
+    id 'org.springframework.boot' version '3.5.4' apply false
+    id 'io.spring.dependency-management' version '1.1.7' apply false
+}
+
 allprojects {
     repositories {
         mavenCentral()
@@ -6,6 +11,8 @@ allprojects {
 
 subprojects {
     apply plugin: 'java'
+    apply plugin: 'io.spring.dependency-management'
+
     group = 'com.skytracker'
     version = '0.0.1-SNAPSHOT'
 
@@ -13,5 +20,27 @@ subprojects {
         toolchain {
             languageVersion = JavaLanguageVersion.of(17)
         }
+    }
+
+    configurations {
+        compileOnly {
+            extendsFrom annotationProcessor
+        }
+    }
+
+    dependencyManagement {
+        imports {
+            mavenBom 'org.springframework.boot:spring-boot-dependencies:3.5.4'
+        }
+    }
+
+    dependencies {
+        compileOnly 'org.projectlombok:lombok:1.18.36'
+        annotationProcessor 'org.projectlombok:lombok:1.18.36'
+        testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    }
+
+    tasks.withType(Test).configureEach {
+        useJUnitPlatform()
     }
 }

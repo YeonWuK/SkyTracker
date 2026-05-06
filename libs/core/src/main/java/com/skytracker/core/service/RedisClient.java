@@ -1,15 +1,13 @@
 package com.skytracker.core.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
+import com.skytracker.common.exception.integrations.RouteAggregationException;
+import com.skytracker.common.exception.integrations.RouteKeyNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
 import java.time.Duration;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 @Component
@@ -64,11 +62,26 @@ public class RedisClient {
         redisTemplate.expire(key, Duration.ofMinutes(13));
     }
 
-    public Integer getminPrice(String key) {
+    /**
+     * Redis에 저장된 최저가 문자열을 long으로 변환해 반환한다.
+     */
+    public long getMinPrice(String key) {
         String value = (String) redisTemplate.opsForValue().get(key);
         if (value == null) {
-            return null;
+            throw new RouteKeyNotFoundException("최저가 Redis key를 찾을 수 없습니다. key=" + key);
         }
-        return Integer.parseInt(value);
+        try {
+            return Long.parseLong(value);
+        } catch (NumberFormatException e) {
+            throw new RouteAggregationException("유효하지 않은 최저가 값입니다. key=" + key + ", value=" + value);
+        }
+    }
+
+    /**
+     * 기존 호출부 호환용 메서드다. 신규 코드는 getMinPrice를 사용한다.
+     */
+    @Deprecated
+    public long getminPrice(String key) {
+        return getMinPrice(key);
     }
 }

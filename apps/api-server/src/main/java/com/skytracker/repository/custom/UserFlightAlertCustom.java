@@ -8,4 +8,5 @@ import java.util.List;
 public interface UserFlightAlertCustom {
 
     List<UserFlightAlert> findAllByFlightAlert(FlightAlert flightAlert);
+    List<UserFlightAlert> findAllByUserId(Long userId);
 }

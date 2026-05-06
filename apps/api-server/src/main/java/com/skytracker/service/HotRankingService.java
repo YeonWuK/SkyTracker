@@ -1,9 +1,7 @@
 package com.skytracker.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.skytracker.common.dto.HotRouteSummaryDto;
-import com.skytracker.common.dto.flightSearch.FlightSearchResponseDto;
+import com.skytracker.common.exception.integrations.HotRouteParsedFailed;
 import com.skytracker.core.constants.RedisKeys;
 import com.skytracker.core.service.RedisClient;
 import lombok.RequiredArgsConstructor;
@@ -20,8 +18,10 @@ import java.util.List;
 public class HotRankingService {
 
     private final RedisClient redisClient;
-    private final ObjectMapper objectMapper;
 
+    /**
+     * HOT_ROUTES 목록을 읽어 인기 노선 요약 DTO 리스트로 변환한다.
+     */
     public List<HotRouteSummaryDto> getHotRouteSummary() {
         List<String> keys = redisClient.getList(RedisKeys.HOT_ROUTES);
 
@@ -44,15 +44,16 @@ public class HotRankingService {
         return result;
     }
 
-    private HotRouteSummaryDto parseUniqueKey(String key, int rank) throws JsonProcessingException {
+    /**
+     * Redis route key를 화면 응답용 인기 노선 요약 DTO로 변환한다.
+     */
+    private HotRouteSummaryDto parseUniqueKey(String key, int rank) {
 
         String[] parts = key.split(":");
 
         if (parts.length < 4 || parts.length > 5) {
-            throw new IllegalArgumentException("Invalid key format: " + key);
+            throw new HotRouteParsedFailed("Invalid key format: " + key);
         }
-
-        Integer minPrice = getMinPrice(key);
 
         String departureAirport = parts[0];
         String arrivalAirport = parts[1];
@@ -62,8 +63,9 @@ public class HotRankingService {
 
         int adults = Integer.parseInt(parts.length == 5 ? parts[4] : parts[3]);
 
+        // route key와 함께 저장된 최저가 key를 조회한다.
         String minKey = key + ":minPrice";
-        int minPrice = redisClient.getminPrice(minKey);
+        long minPrice = redisClient.getMinPrice(minKey);
 
         return HotRouteSummaryDto.builder()
                 .rank(rank)
@@ -76,56 +78,4 @@ public class HotRankingService {
                 .minPrice(minPrice)
                 .build();
     }
-
-    private Integer getMinPrice(String routeKey) throws JsonProcessingException {
-
-        List<String> hotRouteList = redisClient.getList(routeKey);
-
-        Integer minPrice = null;
-
-        for (String hotRoute : hotRouteList) {
-            FlightSearchResponseDto dto =
-                    objectMapper.readValue(hotRoute, FlightSearchResponseDto.class);
-
-            int price = dto.getTotalPrice();
-            if (minPrice == null || price < minPrice) {
-                minPrice = price;
-                log.info("해당 항공편 {} 최저가: {}", routeKey, price);
-            }
-        }
-        return minPrice;
-    }
 }
-
-//    /**
-//     * Redis에 저장된 JSON 리스트(String)를 FlightSearchResponseDto 리스트로 변환
-//     */
-//    private List<FlightSearchResponseDto> classifyDto(List<String> values) throws JsonProcessingException {
-//        List<FlightSearchResponseDto> result = new ArrayList<>();
-//
-//        try {
-//            for (String value : values) {
-//                if (value == null) {
-//                    continue;
-//                }
-//
-//                JsonNode node = objectMapper.readTree(value);
-//
-//                // tripType 필터 (필요 없으면 이 블록 제거해도 됨)
-//                String tripType = node.path("tripType").asText();
-//                if (!"ONE_WAY".equals(tripType) && !"ROUND_TRIP".equals(tripType)) {
-//                    // 이상한 값이면 스킵
-//                    continue;
-//                }
-//
-//                FlightSearchResponseDto dto =
-//                        objectMapper.treeToValue(node, FlightSearchResponseDto.class);
-//
-//                result.add(dto);
-//            }
-//        } catch (JsonMappingException e) {
-//            throw new JsonMappingFailedException("역직렬화 실패: JSON 구조가 DTO와 맞지 않습니다", e);
-//        }
-//
-//        return result;
-//    }
