@@ -58,26 +58,19 @@ public class PriceAlertService {
     }
 
     public void toggleAlert(Long userId, Long alertId) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new UserNotFoundException(userId));
-
         UserFlightAlert alert = userFlightAlertRepository
-                .findByIdAndUser(alertId, user)
+                .findByIdAndUserId(alertId, userId)
                         .orElseThrow(() -> new FlightAlertNotFoundException(alertId));
 
         alert.setActive(!alert.isActive());
     }
 
     public List<FlightAlertResponseDto> getUserFlightAlerts(Long userId) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new UserNotFoundException(userId));
-
-        List<FlightAlertResponseDto> result = userFlightAlertRepository.findAllByUser(user).stream()
+        List<FlightAlertResponseDto> result = userFlightAlertRepository.findAllByUserId(userId).stream()
                 .map(UserFlightAlertMapper::toDto)
                 .collect(Collectors.toList());
 
-        result.forEach(dto ->
-                log.info("FlightAlertResponseDto alertId={}, lastCheckedPrice={}",
+        result.forEach(dto -> log.debug("FlightAlertResponseDto alertId={}, lastCheckedPrice={}",
                         dto.getAlertId(), dto.getLastCheckedPrice())
         );
 
@@ -85,10 +78,7 @@ public class PriceAlertService {
     }
 
     public void deleteUserFlightAlert(Long userId, Long alertId) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new UserNotFoundException(userId));
-
-        UserFlightAlert alert = userFlightAlertRepository.findByIdAndUser(alertId, user)
+        UserFlightAlert alert = userFlightAlertRepository.findByIdAndUserId(alertId, userId)
                 .orElseThrow(() -> new FlightAlertNotFoundException(alertId));
 
         FlightAlert flightAlert = alert.getFlightAlert();

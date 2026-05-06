@@ -6,11 +6,12 @@ import com.skytracker.common.dto.SearchContext;
 import com.skytracker.common.dto.alerts.FlightAlertRequestDto;
 import com.skytracker.common.dto.flightSearch.FlightSearchRequestDto;
 import com.skytracker.common.dto.flightSearch.FlightSearchResponseDto;
+import com.skytracker.common.exception.BusinessException;
+import com.skytracker.common.exception.integrations.FlightPriceComparisonException;
 import com.skytracker.common.exception.integrations.FlightSearchException;
 import com.skytracker.core.utils.AmadeusResponseParser;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpServerErrorException;
@@ -28,7 +29,7 @@ public class AmadeusFlightSearchService {
     private static final String FLIGHTSERACH_URL = "https://test.api.amadeus.com/v2/shopping/flight-offers";
 
     /**
-     * redis 에서 조회한 accessToken 과 req 통해 Amadeus API 에 Response 요청
+     * Redis에서 조회한 accessToken으로 Amadeus 항공권 검색 API를 호출한다.
      */
     public List<FlightSearchResponseDto> searchFlights(String accessToken, FlightSearchRequestDto req) {
         long start = System.nanoTime();
@@ -71,7 +72,7 @@ public class AmadeusFlightSearchService {
     }
 
     /**
-     * POST 요청용 Request Body 생성
+     * Amadeus Flight Offers API에 전달할 POST 요청 본문을 생성한다.
      */
     private Map<String, Object> buildFlightSearchRequestBody(FlightSearchRequestDto req) {
         Map<String, Object> body = new HashMap<>();
@@ -130,7 +131,7 @@ public class AmadeusFlightSearchService {
     }
 
     /**
-     * Amadeus Flight Offers API POST 호출
+     * 공통 헤더를 붙여 Amadeus Flight Offers API에 POST 요청을 보낸다.
      */
     private ResponseEntity<String> callAmadeusPostApi(Map<String, Object> body, String accessToken) {
         HttpHeaders headers = new HttpHeaders();
@@ -152,8 +153,8 @@ public class AmadeusFlightSearchService {
     }
 
     /**
-     *  항공권 가격 비교 서비스 로직
-     **/
+     * 알림 조건에 해당하는 항공권을 다시 조회해 현재 최저가를 반환한다.
+     */
      public int compareFlightsPrice(String accessToken, FlightAlertRequestDto dto) {
          try {
              FlightSearchRequestDto searchReq = dto.toSearchRequest();
@@ -168,9 +169,10 @@ public class AmadeusFlightSearchService {
              ObjectMapper objectMapper = new ObjectMapper();
              JsonNode root = objectMapper.readTree(body);
 
+             // 조회 결과가 없으면 가격 비교 실패로 처리한다.
              JsonNode data = root.path("data");
              if (!data.isArray() || data.isEmpty()) {
-                 throw new RuntimeException("항공권 가격을 찾을 수 없습니다.");
+                 throw new FlightPriceComparisonException("항공권 가격을 찾을 수 없습니다.");
              }
 
              // 4. 최소 가격 추출 (여러 옵션 중 가장 싼 거)
@@ -180,9 +182,12 @@ public class AmadeusFlightSearchService {
              log.info("조회된 new 항공권 가격: {}", price);
              return price;
 
+         } catch (BusinessException e) {
+             // 이미 커스텀 예외인 경우 ErrorCode를 유지한 채 상위 핸들러로 전달한다.
+             throw e;
          } catch (Exception e) {
              log.error("가격 비교 중 오류", e);
-             throw new RuntimeException("항공권 가격 비교 중 오류 발생");
+             throw new FlightPriceComparisonException("항공권 가격 비교 중 오류 발생", e);
          }
      }
 }

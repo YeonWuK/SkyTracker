@@ -18,6 +18,6 @@ public class HotRouteSummaryDto {
     private String departureDate;
     private String arrivalDate;  // 편도면 null
     private int adults;
-    private int minPrice; // 최저가
+    private long minPrice; // 최저가
 
 }

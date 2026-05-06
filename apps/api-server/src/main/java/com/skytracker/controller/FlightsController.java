@@ -28,40 +28,37 @@ public class FlightsController {
     private final SearchLogService searchLogService;
     private final FlightSearchCache flightSearchCache;
 
+    /**
+     * 항공권 검색 요청을 처리하고, 캐시 미스 시 Amadeus API를 조회한다.
+     */
     @PostMapping("/search")
-    public ResponseEntity<?> searchFlights(@RequestBody @Valid FlightSearchRequestDto dto) {
-        try {
-            searchLogService.publishSearchLog(dto);
-            log.info("Successfully published search log");
+    public ResponseEntity<List<FlightSearchResponseDto>> searchFlights(@RequestBody @Valid FlightSearchRequestDto dto) {
+        searchLogService.publishSearchLog(dto);
+        log.info("Successfully published search log");
 
-            String token = amadeusService.getAmadeusAccessToken();
-            String uniqueKey = dto.buildUniqueKey();
+        String token = amadeusService.getAmadeusAccessToken();
+        String uniqueKey = dto.buildUniqueKey();
 
-            log.info("unique key: {}", uniqueKey);
+        log.info("unique key: {}", uniqueKey);
 
-            List<FlightSearchResponseDto> results;
-
-            // 1. 캐시 조회
-            if (flightSearchCache.hasKey(uniqueKey)) {
-                results = flightSearchCache.cacheSearch(uniqueKey);
-                // 역직렬화 실패 등으로 null 나올 수도 있으니 한 번 더 방어
-                if (results != null) {
-                    log.info("Cache HIT: {}", uniqueKey);
-                    return ResponseEntity.ok(results);
-                }
-                log.info("Cache key exists but value is invalid, falling back to API: {}", uniqueKey);
+        // Redis 캐시에 유효한 검색 결과가 있으면 API 호출 없이 반환한다.
+        if (flightSearchCache.hasKey(uniqueKey)) {
+            List<FlightSearchResponseDto> cachedResults = flightSearchCache.cacheSearch(uniqueKey);
+            if (cachedResults != null) {
+                log.info("Cache HIT: {}", uniqueKey);
+                return ResponseEntity.ok(cachedResults);
             }
-
-            // 2. 캐시 미스 or 캐시 값 문제 시 → API 호출
-            results = flightSearchService.searchFlights(token, dto);
-
-            return ResponseEntity.ok(results);
-        } catch (Exception e) {
-            log.error("Flight search failed", e);
-            return ResponseEntity.internalServerError().body("Internal error: " + e.getMessage());
+            log.info("Cache key exists but value is invalid, falling back to API: {}", uniqueKey);
         }
+
+        // 캐시가 없거나 깨진 경우 실시간 항공권 검색을 수행한다.
+        List<FlightSearchResponseDto> results = flightSearchService.searchFlights(token, dto);
+        return ResponseEntity.ok(results);
     }
 
+    /**
+     * Redis에 캐싱된 인기 노선 요약 정보를 조회한다.
+     */
     @GetMapping("/hot-routes")
     public ResponseEntity<List<HotRouteSummaryDto>> getHotRouteBestPrice() {
         List<HotRouteSummaryDto> result = rankingService.getHotRouteSummary();

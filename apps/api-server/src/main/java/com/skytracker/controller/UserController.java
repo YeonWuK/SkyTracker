@@ -33,7 +33,7 @@ public class UserController {
     private final TokenBlackListService tokenBlackListService;
 
     /**
-     * 회원 정보 수정
+     * 현재 로그인한 사용자의 회원 정보를 수정한다.
      */
     @PatchMapping
     public ResponseEntity<?> updateUser(@AuthenticationPrincipal CustomUserDetails customUserDetails,
@@ -53,7 +53,7 @@ public class UserController {
     }
 
     /**
-     *  회원 탈퇴
+     * 현재 로그인한 사용자의 회원 계정을 삭제한다.
      */
     @DeleteMapping
     public ResponseEntity<String> deleteUser(@AuthenticationPrincipal CustomUserDetails customUserDetails) {
@@ -64,7 +64,7 @@ public class UserController {
     }
 
     /**
-     * 회원 정보창
+     * 현재 로그인한 사용자의 프로필 정보를 조회한다.
      */
     @GetMapping("/profile-screen")
     public ResponseEntity<UserResponseDto> profileScreen(@AuthenticationPrincipal CustomUserDetails customUserDetails) {
@@ -74,7 +74,7 @@ public class UserController {
     }
 
     /**
-     * 로그아웃
+     * accessToken을 블랙리스트에 등록하고 SecurityContext를 비운다.
      */
     @PostMapping("/logout")
     public ResponseEntity<?> logout(HttpServletRequest request) {
@@ -90,7 +90,7 @@ public class UserController {
     }
 
     /**
-     * accessToken 재발금
+     * refreshToken을 검증하고 새 accessToken을 발급한다.
      */
     @PostMapping("/refresh-token")
     public ResponseEntity<?> refreshToken(@RequestBody RefreshTokenRequest request) {
@@ -112,7 +112,7 @@ public class UserController {
     }
 
     /**
-     * refreshToken 발급
+     * 현재 로그인한 사용자에게 새 refreshToken을 발급한다.
      */
     @PostMapping("/new-refresh-token")
     public ResponseEntity<?> newRefreshToken(@AuthenticationPrincipal CustomUserDetails customUserDetails) {

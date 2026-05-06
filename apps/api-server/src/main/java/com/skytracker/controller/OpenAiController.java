@@ -24,6 +24,9 @@ public class OpenAiController {
     private final ChatRoomService chatRoomService;
     private final ChatMessageService chatMessageService;
 
+    /**
+     * 현재 로그인한 사용자의 채팅방을 만들거나 조회하고 최근 대화 내역을 반환한다.
+     */
     @GetMapping("/chatRoom")
     public List<ChatResponseDto> chatRoom(@AuthenticationPrincipal CustomUserDetails customUserDetails){
         Long userId = customUserDetails.getUserId();
@@ -33,6 +36,9 @@ public class OpenAiController {
         return history;
     }
 
+    /**
+     * 사용자의 질문을 OpenAI 서비스에 전달하고 답변을 반환한다.
+     */
     @PostMapping("/ask")
     public ChatResponseDto ask(@AuthenticationPrincipal CustomUserDetails customUserDetails,
                       @RequestBody ChatRequestDto chatRequestDto) {

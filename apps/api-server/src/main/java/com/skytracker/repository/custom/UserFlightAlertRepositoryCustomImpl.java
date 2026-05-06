@@ -28,4 +28,13 @@ public class UserFlightAlertRepositoryCustomImpl implements UserFlightAlertCusto
                 .where(userFlightAlert.flightAlert.eq(alert))
                 .fetch();
     }
+
+    @Override
+    public List<UserFlightAlert> findAllByUserId(Long userId) {
+        return queryFactory
+                .selectFrom(userFlightAlert)
+                .join(userFlightAlert.flightAlert, flightAlert).fetchJoin()
+                .where(userFlightAlert.user.id.eq(userId))
+                .fetch();
+    }
 }

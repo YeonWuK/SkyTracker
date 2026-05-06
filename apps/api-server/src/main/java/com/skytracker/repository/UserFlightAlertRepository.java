@@ -13,6 +13,5 @@ import java.util.Optional;
 @Repository
 public interface UserFlightAlertRepository extends JpaRepository<UserFlightAlert, Long>, UserFlightAlertCustom {
     boolean existsByUserAndFlightAlert(User user, FlightAlert flightAlert);
-    Optional<UserFlightAlert> findByIdAndUser(Long id, User user);
-    List<UserFlightAlert> findAllByUser(User user);
+    Optional<UserFlightAlert> findByIdAndUserId(Long id, Long user_id);
 }
