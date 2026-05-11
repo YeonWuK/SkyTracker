@@ -44,7 +44,7 @@ helm install redis bitnami/redis \
   -f k8s/redis/values-redis-ha.yaml
 ```
 
-> Sentinel 구성 (master 1 + replica 3), 비밀번호: `redis`
+> Sentinel 구성 (master 1 + replica 3)
 
 ---
 
@@ -130,10 +130,8 @@ kubectl apply -f k8s/kafka/kafka-topic.yaml -n kafka
 MySQL, Redis, ES, Kafka 모두 Running 확인 후 배포합니다.
 
 ```bash
-# Secret (app-secret.yaml은 gitignore 대상이므로 example을 복사한 뒤 실제 값을 채움)
-cp k8s/apps/app-secret.example.yaml k8s/apps/app-secret.yaml
-
-# apps/data 네임스페이스용 Secret이 한 파일에 분리되어 있음
+# app-secret.yaml은 gitignore 대상입니다.
+# 새로 만들 때만 app-secret.example.yaml을 참고하고, 기존 로컬 app-secret.yaml은 덮어쓰지 않습니다.
 kubectl apply -f k8s/apps/app-secret.yaml
 
 # Service & Deployments
