@@ -40,7 +40,7 @@ helm repo update
 ### 1. Namespace 생성
 
 ```powershell
-kubectl apply -f k8s/namespaces.yaml
+kubectl apply -f namespaces.yaml
 ```
 
 ### 2. Secret 적용
@@ -50,22 +50,26 @@ kubectl apply -f k8s/namespaces.yaml
 MySQL과 Logstash가 `data` 네임스페이스의 `app-secret`을 참조하므로, 데이터 컴포넌트 배포 전에 Secret을 먼저 적용합니다.
 
 ```powershell
-kubectl apply -f k8s/apps/app-secret.yaml
+kubectl apply -f apps/app-secret.yaml
 ```
 
 ### 3. MySQL
 
 ```powershell
-kubectl apply -f k8s/mysql/headless-service.yaml
-kubectl apply -f k8s/mysql/statefulset.yaml
+kubectl apply -f mysql/headless-service.yaml
+kubectl apply -f mysql/statefulset.yaml
 ```
 
 ### 4. Redis - Bitnami Helm
 
+Redis는 Helm으로 설치하며, `redis` 디렉터리에 있는 StorageClass와 values 파일을 사용합니다.
+
 ```powershell
+kubectl apply -f redis/sc.yaml
+
 helm install redis bitnami/redis `
   -n data `
-  -f k8s/redis/values-redis-ha.yaml
+  -f redis/values-redis-ha.yaml
 ```
 
 Sentinel 구성은 `master 1 + replica 3` 구조입니다.
@@ -87,7 +91,7 @@ kubectl wait --for=condition=ready pod `
   --timeout=120s
 
 # ES 클러스터 배포
-kubectl apply -f k8s/es/es.yaml -n data
+kubectl apply -f es/es.yaml -n data
 
 # ES Ready 대기
 kubectl wait elasticsearch/elastic `
@@ -96,9 +100,9 @@ kubectl wait elasticsearch/elastic `
   --timeout=300s
 
 # Kibana & Logstash
-kubectl apply -f k8s/es/kibana.yaml -n data
-kubectl apply -f k8s/es/logstash-configmap.yaml -n data
-kubectl apply -f k8s/es/logstash-deployment.yaml -n data
+kubectl apply -f es/kibana.yaml -n data
+kubectl apply -f es/logstash-configmap.yaml -n data
+kubectl apply -f es/logstash-deployment.yaml -n data
 ```
 
 ECK는 배포 시 Elasticsearch 비밀번호를 자동 생성합니다. `apps`, `data` 네임스페이스의 `app-secret`에 있는 `ES_PASSWORD`를 모두 동기화해야 합니다.
@@ -139,13 +143,13 @@ kubectl wait --for=condition=ready pod `
   --timeout=120s
 
 # Kafka 클러스터 배포
-kubectl apply -f k8s/kafka/kafka-cluster.yaml -n kafka
+kubectl apply -f kafka/kafka-cluster.yaml -n kafka
 
 # Kafka Pod Ready 확인
 kubectl get pods -n kafka -w
 
 # Topic 생성
-kubectl apply -f k8s/kafka/kafka-topic.yaml -n kafka
+kubectl apply -f kafka/kafka-topic.yaml -n kafka
 ```
 
 `kubectl get pods -n kafka -w`는 계속 watch 상태로 유지됩니다. 다음 명령으로 넘어가려면 `Ctrl + C`로 종료합니다.
@@ -156,14 +160,14 @@ MySQL, Redis, Elasticsearch, Kafka가 모두 Running 상태인지 확인한 뒤 
 
 ```powershell
 # Secret을 수정한 경우에만 다시 적용합니다.
-kubectl apply -f k8s/apps/app-secret.yaml
+kubectl apply -f apps/app-secret.yaml
 
 # Service & Deployments
-kubectl apply -f k8s/apps/service.yaml
-kubectl apply -f k8s/apps/api-server-deployment.yaml
-kubectl apply -f k8s/apps/price-collector-deployment.yaml
-kubectl apply -f k8s/apps/price-alert-deployment.yaml
-kubectl apply -f k8s/apps/api-server-hpa.yaml
+kubectl apply -f apps/service.yaml
+kubectl apply -f apps/api-server-deployment.yaml
+kubectl apply -f apps/price-collector-deployment.yaml
+kubectl apply -f apps/price-alert-deployment.yaml
+kubectl apply -f apps/api-server-hpa.yaml
 ```
 
 ## 상태 확인
@@ -236,7 +240,7 @@ kubectl get events -n kafka --sort-by='.lastTimestamp'
 | 증상 | 원인 | 해결 |
 | --- | --- | --- |
 | `kubectl`이 클러스터를 못 찾음 | Docker Desktop Kubernetes 비활성화 또는 context 불일치 | Docker Desktop에서 Kubernetes 활성화 후 `kubectl config use-context docker-desktop` |
-| `mysql-0` CreateContainerConfigError | `data` 네임스페이스의 `app-secret` 누락 또는 `DB_PASSWORD` 누락 | `kubectl apply -f k8s/apps/app-secret.yaml` 실행 |
+| `mysql-0` CreateContainerConfigError | `data` 네임스페이스의 `app-secret` 누락 또는 `DB_PASSWORD` 누락 | `kubectl apply -f apps/app-secret.yaml` 실행 |
 | `api-server` 401 ES 에러 | ECK 비밀번호와 `apps/data` app-secret의 `ES_PASSWORD` 불일치 | PowerShell용 ES_PASSWORD 동기화 명령 실행 |
 | Kafka CRD not found | Strimzi Operator 미설치 | Strimzi Operator 설치 후 Kafka manifest 재적용 |
 | Kafka pod 미생성 | Strimzi 버전 불일치 | `--version 0.44.0`으로 설치 |
