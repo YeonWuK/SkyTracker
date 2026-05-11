@@ -29,16 +29,16 @@ public class JwtTokenFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String token = resolveToken(request);
 
-        log.info("requestUri: {}", request.getRequestURI());
+        log.debug("requestUri: {}", request.getRequestURI());
 
         if (!StringUtils.hasText(token)) {
-            log.info("Jwt token is empty");
+            log.debug("Jwt token is empty");
             filterChain.doFilter(request, response);
             return;
         }
 
         if (tokenBlackListService.isBlackList(token)) {
-            log.info("Blacklisted token: {}", token);
+            log.warn("Blacklisted JWT token rejected");
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Invalid access token");
             return;
         }
@@ -46,13 +46,13 @@ public class JwtTokenFilter extends OncePerRequestFilter {
         String username = jwtUtils.extractUserEmail(token);
 
         if (username == null) {
-            log.info("Invalid token, Incorrect username");
+            log.debug("Invalid token, incorrect username");
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Invalid access token");
             return;
         }
 
         if (SecurityContextHolder.getContext().getAuthentication() != null) {
-            log.info("SecurityContext already has auth, skip");
+            log.debug("SecurityContext already has auth, skip");
             filterChain.doFilter(request, response);
             return;
         }
@@ -64,7 +64,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
             return;
         }
 
-        log.info("Successfully validate token");
+        log.debug("Successfully validate token");
         setAuthentication(userDetails, request);
 
         filterChain.doFilter(request, response);

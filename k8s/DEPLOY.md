@@ -80,13 +80,17 @@ kubectl apply -f k8s/es/logstash-deployment.yaml -n data
 ```
 
 > **주의**: ECK는 배포 시마다 ES 비밀번호를 새로 생성합니다.
-> app-secret의 `ES_PASSWORD`와 동기화가 필요합니다.
+> `apps`, `data` 네임스페이스의 `app-secret`에 있는 `ES_PASSWORD`를 모두 동기화해야 합니다.
 
 ```bash
 # ECK 생성 비밀번호 → app-secret 동기화
 ES_PASS=$(kubectl get secret elastic-es-elastic-user -n data -o jsonpath='{.data.elastic}' | base64 -d)
 
 kubectl patch secret app-secret -n apps \
+  --type='json' \
+  -p="[{\"op\":\"replace\",\"path\":\"/data/ES_PASSWORD\",\"value\":\"$(echo -n $ES_PASS | base64)\"}]"
+
+kubectl patch secret app-secret -n data \
   --type='json' \
   -p="[{\"op\":\"replace\",\"path\":\"/data/ES_PASSWORD\",\"value\":\"$(echo -n $ES_PASS | base64)\"}]"
 ```
@@ -126,11 +130,11 @@ kubectl apply -f k8s/kafka/kafka-topic.yaml -n kafka
 MySQL, Redis, ES, Kafka 모두 Running 확인 후 배포합니다.
 
 ```bash
-# Secret (app-secret을 data 네임스페이스에도 복사)
+# Secret (app-secret.yaml은 gitignore 대상이므로 example을 복사한 뒤 실제 값을 채움)
+cp k8s/apps/app-secret.example.yaml k8s/apps/app-secret.yaml
+
+# apps/data 네임스페이스용 Secret이 한 파일에 분리되어 있음
 kubectl apply -f k8s/apps/app-secret.yaml
-kubectl get secret app-secret -n apps -o yaml | \
-  sed 's/namespace: apps/namespace: data/' | \
-  kubectl apply -f -
 
 # Service & Deployments
 kubectl apply -f k8s/apps/service.yaml
@@ -189,8 +193,8 @@ kubectl port-forward svc/api-server 8080:80 -n apps
 
 | 증상 | 원인 | 해결 |
 |------|------|------|
-| `mysql-0` CreateContainerConfigError | `app-secret`이 data 네임스페이스에 없음 | secret을 data ns에도 apply |
-| `api-server` 401 ES 에러 | ECK 비밀번호 불일치 | ES_PASSWORD 동기화 명령 실행 |
+| `mysql-0` CreateContainerConfigError | `data` 네임스페이스의 `app-secret` 누락 또는 `DB_PASSWORD` 누락 | `kubectl apply -f k8s/apps/app-secret.yaml` 실행 |
+| `api-server` 401 ES 에러 | ECK 비밀번호와 `apps/data` app-secret의 `ES_PASSWORD` 불일치 | ES_PASSWORD 동기화 명령 실행 |
 | Kafka CRD not found | Strimzi Operator 미설치 | helm install strimzi-operator |
 | Kafka pod 미생성 | Strimzi 버전이 0.45+ (Zookeeper 제거됨) | --version 0.44.0 으로 재설치 |
 | `logstash` CrashLoopBackOff | Kafka 미실행 | Kafka 배포 후 자동 정상화 |

@@ -35,8 +35,7 @@ public class FlightAlertRequestDto {
                 departureDate,
                 returnDate != null ? returnDate : "",
                 travelClass,
-                airlineCode,
-                flightNumber,
+                String.valueOf(adults),
                 String.valueOf(roundTrip),
                 String.valueOf(nonStop)
         );

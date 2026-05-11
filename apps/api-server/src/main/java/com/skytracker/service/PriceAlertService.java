@@ -78,12 +78,10 @@ public class PriceAlertService {
     }
 
     public void deleteUserFlightAlert(Long userId, Long alertId) {
-        UserFlightAlert alert = userFlightAlertRepository.findByIdAndUserId(alertId, userId)
+        UserFlightAlert userFlightAlert = userFlightAlertRepository.findByIdAndUserId(alertId, userId)
                 .orElseThrow(() -> new FlightAlertNotFoundException(alertId));
 
-        FlightAlert flightAlert = alert.getFlightAlert();
-
-        flightAlertRepository.delete(flightAlert);
+        userFlightAlertRepository.delete(userFlightAlert);
 
         log.info("성공적으로 삭제되었습니다! {}", alertId);
     }

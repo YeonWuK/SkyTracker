@@ -140,9 +140,8 @@ public class AmadeusFlightSearchService {
 
         HttpEntity<Map<String, Object>> request = new HttpEntity<>(body, headers);
 
-        log.info("✅ POST 요청 URL: {}", FLIGHTSERACH_URL);
-        log.info("✅ 요청 Body: {}", body);
-        log.info("✅ 요청 AccessToken: {}", accessToken);
+        log.debug("Amadeus Flight Offers 요청 URL: {}", FLIGHTSERACH_URL);
+        log.debug("Amadeus Flight Offers 요청 Body: {}", body);
 
         return restTemplate.exchange(
                 FLIGHTSERACH_URL,
