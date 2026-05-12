@@ -5,6 +5,35 @@ Windows Intel 환경에서 Docker Desktop Kubernetes, kubectl, helm을 사용해
 > 이 문서는 PowerShell 기준입니다. 명령어 줄바꿈은 백틱 문자(`)를 사용합니다.
 > 모든 명령은 프로젝트 루트 디렉터리에서 실행합니다.
 
+## 실행 스크립트
+
+Windows에서 버튼처럼 실행하려면 `k8s/deploy-windows.cmd` 파일을 더블클릭합니다. 이 스크립트는 Docker image 다운로드부터 Kubernetes 배포까지 순서대로 실행합니다.
+
+아래 명령으로 전체 배포를 한 번에 실행할 수 있습니다.
+
+```powershell
+Set-Location k8s
+.\deploy-windows.cmd
+```
+
+특정 단계만 실행하려면 `-Step` 값을 지정합니다.
+
+```powershell
+Set-Location k8s
+.\deploy-windows.cmd -Step images
+.\deploy-windows.cmd -Step redis
+.\deploy-windows.cmd -Step sync-es-password
+.\deploy-windows.cmd -Step apps
+```
+
+지원 단계는 `images`, `repos`, `namespaces`, `secrets`, `mysql`, `redis`, `elastic`, `sync-es-password`, `kafka`, `apps`, `status`, `all`입니다.
+
+`all` 실행 순서는 다음과 같습니다.
+
+```text
+images -> repos -> namespaces -> secrets -> mysql -> redis -> elastic -> sync-es-password -> kafka -> apps -> status
+```
+
 ## 사전 준비
 
 - Windows Docker Desktop
@@ -34,6 +63,29 @@ helm repo add elastic https://helm.elastic.co
 helm repo add strimzi https://strimzi.io/charts/
 helm repo update
 ```
+
+## Docker image 다운로드
+
+배포 전에 Windows Docker Desktop에 필요한 image를 먼저 내려받습니다.
+
+```powershell
+Set-Location k8s
+.\deploy-windows.cmd -Step images
+```
+
+스크립트가 내려받는 image는 다음과 같습니다.
+
+| Image | 사용처 |
+| --- | --- |
+| `mysql:8.0` | MySQL StatefulSet |
+| `yeonwoo02/skytracker-app:latest` | api-server |
+| `yeonwoo02/skytracker-price-alert:latest` | price-alert |
+| `yeonwoo02/skytracker-price-collector:latest` | price-collector |
+| `docker.elastic.co/elasticsearch/elasticsearch:8.13.4` | Elasticsearch |
+| `docker.elastic.co/kibana/kibana:8.13.4` | Kibana |
+| `docker.elastic.co/logstash/logstash:8.13.4` | Logstash |
+| `quay.io/strimzi/operator:0.44.0` | Strimzi Operator |
+| `quay.io/strimzi/kafka:0.44.0-kafka-3.7.0` | Kafka broker |
 
 ## 배포 순서
 

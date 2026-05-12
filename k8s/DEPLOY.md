@@ -15,6 +15,36 @@ helm repo add strimzi https://strimzi.io/charts/
 helm repo update
 ```
 
+### Image 사전 다운로드
+
+Docker Desktop 로컬 Kubernetes에서는 아래 image를 미리 받아두면 배포 중 image pull 시간을 줄이고, 잘못된 tag를 먼저 확인할 수 있습니다.
+
+```bash
+docker pull mysql:8.0
+docker pull yeonwoo02/skytracker-app:latest
+docker pull yeonwoo02/skytracker-price-alert:latest
+docker pull yeonwoo02/skytracker-price-collector:latest
+docker pull docker.elastic.co/elasticsearch/elasticsearch:8.13.4
+docker pull docker.elastic.co/kibana/kibana:8.13.4
+docker pull docker.elastic.co/logstash/logstash:8.13.4
+docker pull quay.io/strimzi/operator:0.44.0
+docker pull quay.io/strimzi/kafka:0.44.0-kafka-3.7.0
+```
+
+| Image | 사용처 |
+| --- | --- |
+| `mysql:8.0` | MySQL StatefulSet |
+| `yeonwoo02/skytracker-app:latest` | api-server |
+| `yeonwoo02/skytracker-price-alert:latest` | price-alert |
+| `yeonwoo02/skytracker-price-collector:latest` | price-collector |
+| `docker.elastic.co/elasticsearch/elasticsearch:8.13.4` | Elasticsearch |
+| `docker.elastic.co/kibana/kibana:8.13.4` | Kibana |
+| `docker.elastic.co/logstash/logstash:8.13.4` | Logstash |
+| `quay.io/strimzi/operator:0.44.0` | Strimzi Operator |
+| `quay.io/strimzi/kafka:0.44.0-kafka-3.7.0` | Kafka broker |
+
+> EKS에서는 로컬 `docker pull`이 노드 image cache에 영향을 주지 않습니다. EKS에서 `ImagePullBackOff`가 발생하면 이미지 tag, 레지스트리 접근 권한, 노드의 인터넷/NAT 경로, Docker Hub rate limit을 확인해야 합니다.
+
 ---
 
 ## 배포 순서
@@ -199,4 +229,5 @@ kubectl port-forward svc/api-server 8080:80 -n apps
 | `api-server` 401 ES 에러 | ECK 비밀번호와 `apps/data` app-secret의 `ES_PASSWORD` 불일치 | ES_PASSWORD 동기화 명령 실행 |
 | Kafka CRD not found | Strimzi Operator 미설치 | helm install strimzi-operator |
 | Kafka pod 미생성 | Strimzi 버전이 0.45+ (Zookeeper 제거됨) | --version 0.44.0 으로 재설치 |
+| `ImagePullBackOff` 또는 `ErrImagePull` | image tag 오타, private image 권한 없음, EKS 노드 인터넷/NAT 문제, Docker Hub rate limit | `kubectl describe pod <pod> -n <namespace>`로 실패 image 확인 후 tag/권한/네트워크 점검 |
 | `logstash` CrashLoopBackOff | Kafka 미실행 | Kafka 배포 후 자동 정상화 |
