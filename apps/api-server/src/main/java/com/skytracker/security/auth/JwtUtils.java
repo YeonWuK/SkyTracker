@@ -33,7 +33,7 @@ public class JwtUtils {
     }
 
     public String generateToken(String email) {
-        log.info("Generating JWT token for user: {}", email);
+        log.debug("Generating JWT access token");
         return Jwts.builder()
                 .setSubject(email)
                 .setIssuedAt(new Date())
@@ -55,10 +55,10 @@ public class JwtUtils {
         try {
             return extractAllClaims(token).getSubject();
         } catch (ExpiredJwtException e) {
-            log.info("Expired JWT token: {}", e.getMessage());
+            log.debug("Expired JWT token");
             return null;
         } catch (JwtException e) {
-            log.info("Invalid JWT token: {}", e.getMessage());
+            log.debug("Invalid JWT token");
             return null;
         }
     }

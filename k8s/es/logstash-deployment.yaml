@@ -21,7 +21,7 @@ spec:
             - containerPort: 9600   # Logstash Monitoring API
           envFrom:
             - secretRef:
-                name: app-secret # ES 비밀번호는 Operator 기준으로 바뀌니 항상 비밀번호 바꿀 것!!!
+                name: app-secret # data 네임스페이스용 app-secret의 Kafka/ES 값 사용
           env:
             - name: DLT_TOPIC
               value: "flight-alert.DLT"

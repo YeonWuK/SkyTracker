@@ -36,7 +36,7 @@ public class SendMailService {
             messageHelper.setText(message.getContent(), true);
 
             mailSender.send(mimeMessage);
-            log.info("이메일 {}로 알림 발송 완료", message.getEmail());
+            log.info("이메일 알림 발송 완료");
         } catch (Exception e) {
             throw new EmailSendFailedException(message.getEmail(), e);
         }

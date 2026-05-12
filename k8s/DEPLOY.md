@@ -15,6 +15,36 @@ helm repo add strimzi https://strimzi.io/charts/
 helm repo update
 ```
 
+### Image 사전 다운로드
+
+Docker Desktop 로컬 Kubernetes에서는 아래 image를 미리 받아두면 배포 중 image pull 시간을 줄이고, 잘못된 tag를 먼저 확인할 수 있습니다.
+
+```bash
+docker pull mysql:8.0
+docker pull yeonwoo02/skytracker-app:latest
+docker pull yeonwoo02/skytracker-price-alert:latest
+docker pull yeonwoo02/skytracker-price-collector:latest
+docker pull docker.elastic.co/elasticsearch/elasticsearch:8.13.4
+docker pull docker.elastic.co/kibana/kibana:8.13.4
+docker pull docker.elastic.co/logstash/logstash:8.13.4
+docker pull quay.io/strimzi/operator:0.44.0
+docker pull quay.io/strimzi/kafka:0.44.0-kafka-3.7.0
+```
+
+| Image | 사용처 |
+| --- | --- |
+| `mysql:8.0` | MySQL StatefulSet |
+| `yeonwoo02/skytracker-app:latest` | api-server |
+| `yeonwoo02/skytracker-price-alert:latest` | price-alert |
+| `yeonwoo02/skytracker-price-collector:latest` | price-collector |
+| `docker.elastic.co/elasticsearch/elasticsearch:8.13.4` | Elasticsearch |
+| `docker.elastic.co/kibana/kibana:8.13.4` | Kibana |
+| `docker.elastic.co/logstash/logstash:8.13.4` | Logstash |
+| `quay.io/strimzi/operator:0.44.0` | Strimzi Operator |
+| `quay.io/strimzi/kafka:0.44.0-kafka-3.7.0` | Kafka broker |
+
+> EKS에서는 로컬 `docker pull`이 노드 image cache에 영향을 주지 않습니다. EKS에서 `ImagePullBackOff`가 발생하면 이미지 tag, 레지스트리 접근 권한, 노드의 인터넷/NAT 경로, Docker Hub rate limit을 확인해야 합니다.
+
 ---
 
 ## 배포 순서
@@ -22,7 +52,7 @@ helm repo update
 ### 1. Namespace 생성
 
 ```bash
-kubectl apply -f k8s/namespaces.yaml
+kubectl apply -f namespaces.yaml
 ```
 
 ---
@@ -30,21 +60,25 @@ kubectl apply -f k8s/namespaces.yaml
 ### 2. MySQL
 
 ```bash
-kubectl apply -f k8s/mysql/headless-service.yaml
-kubectl apply -f k8s/mysql/statefulset.yaml
+kubectl apply -f mysql/headless-service.yaml
+kubectl apply -f mysql/statefulset.yaml
 ```
 
 ---
 
 ### 3. Redis (Bitnami Helm)
 
+Redis는 Helm으로 설치하며, `redis` 디렉터리에 있는 StorageClass와 values 파일을 사용합니다.
+
 ```bash
+kubectl apply -f redis/sc.yaml
+
 helm install redis bitnami/redis \
   -n data \
-  -f k8s/redis/values-redis-ha.yaml
+  -f redis/values-redis-ha.yaml
 ```
 
-> Sentinel 구성 (master 1 + replica 3), 비밀번호: `redis`
+> Sentinel 구성 (master 1 + replica 3)
 
 ---
 
@@ -65,7 +99,7 @@ kubectl wait --for=condition=ready pod \
   --timeout=120s
 
 # ES 클러스터 배포
-kubectl apply -f k8s/es/es.yaml -n data
+kubectl apply -f es/es.yaml -n data
 
 # ES Ready 대기 (green 될 때까지)
 kubectl wait elasticsearch/elastic \
@@ -74,19 +108,23 @@ kubectl wait elasticsearch/elastic \
   --timeout=300s
 
 # Kibana & Logstash
-kubectl apply -f k8s/es/kibana.yaml -n data
-kubectl apply -f k8s/es/logstash-configmap.yaml -n data
-kubectl apply -f k8s/es/logstash-deployment.yaml -n data
+kubectl apply -f es/kibana.yaml -n data
+kubectl apply -f es/logstash-configmap.yaml -n data
+kubectl apply -f es/logstash-deployment.yaml -n data
 ```
 
 > **주의**: ECK는 배포 시마다 ES 비밀번호를 새로 생성합니다.
-> app-secret의 `ES_PASSWORD`와 동기화가 필요합니다.
+> `apps`, `data` 네임스페이스의 `app-secret`에 있는 `ES_PASSWORD`를 모두 동기화해야 합니다.
 
 ```bash
 # ECK 생성 비밀번호 → app-secret 동기화
 ES_PASS=$(kubectl get secret elastic-es-elastic-user -n data -o jsonpath='{.data.elastic}' | base64 -d)
 
 kubectl patch secret app-secret -n apps \
+  --type='json' \
+  -p="[{\"op\":\"replace\",\"path\":\"/data/ES_PASSWORD\",\"value\":\"$(echo -n $ES_PASS | base64)\"}]"
+
+kubectl patch secret app-secret -n data \
   --type='json' \
   -p="[{\"op\":\"replace\",\"path\":\"/data/ES_PASSWORD\",\"value\":\"$(echo -n $ES_PASS | base64)\"}]"
 ```
@@ -110,13 +148,13 @@ kubectl wait --for=condition=ready pod \
   --timeout=120s
 
 # Kafka 클러스터 배포
-kubectl apply -f k8s/kafka/kafka-cluster.yaml -n kafka
+kubectl apply -f kafka/kafka-cluster.yaml -n kafka
 
 # Kafka Pod Ready 대기
 kubectl get pods -n kafka -w
 
 # Topic 생성
-kubectl apply -f k8s/kafka/kafka-topic.yaml -n kafka
+kubectl apply -f kafka/kafka-topic.yaml -n kafka
 ```
 
 ---
@@ -126,18 +164,16 @@ kubectl apply -f k8s/kafka/kafka-topic.yaml -n kafka
 MySQL, Redis, ES, Kafka 모두 Running 확인 후 배포합니다.
 
 ```bash
-# Secret (app-secret을 data 네임스페이스에도 복사)
-kubectl apply -f k8s/apps/app-secret.yaml
-kubectl get secret app-secret -n apps -o yaml | \
-  sed 's/namespace: apps/namespace: data/' | \
-  kubectl apply -f -
+# app-secret.yaml은 gitignore 대상입니다.
+# 새로 만들 때만 app-secret.example.yaml을 참고하고, 기존 로컬 app-secret.yaml은 덮어쓰지 않습니다.
+kubectl apply -f apps/app-secret.yaml
 
 # Service & Deployments
-kubectl apply -f k8s/apps/service.yaml
-kubectl apply -f k8s/apps/api-server-deployment.yaml
-kubectl apply -f k8s/apps/price-collector-deployment.yaml
-kubectl apply -f k8s/apps/price-alert-deployment.yaml
-kubectl apply -f k8s/apps/api-server-hpa.yaml
+kubectl apply -f apps/service.yaml
+kubectl apply -f apps/api-server-deployment.yaml
+kubectl apply -f apps/price-collector-deployment.yaml
+kubectl apply -f apps/price-alert-deployment.yaml
+kubectl apply -f apps/api-server-hpa.yaml
 ```
 
 ---
@@ -189,8 +225,9 @@ kubectl port-forward svc/api-server 8080:80 -n apps
 
 | 증상 | 원인 | 해결 |
 |------|------|------|
-| `mysql-0` CreateContainerConfigError | `app-secret`이 data 네임스페이스에 없음 | secret을 data ns에도 apply |
-| `api-server` 401 ES 에러 | ECK 비밀번호 불일치 | ES_PASSWORD 동기화 명령 실행 |
+| `mysql-0` CreateContainerConfigError | `data` 네임스페이스의 `app-secret` 누락 또는 `DB_PASSWORD` 누락 | `kubectl apply -f apps/app-secret.yaml` 실행 |
+| `api-server` 401 ES 에러 | ECK 비밀번호와 `apps/data` app-secret의 `ES_PASSWORD` 불일치 | ES_PASSWORD 동기화 명령 실행 |
 | Kafka CRD not found | Strimzi Operator 미설치 | helm install strimzi-operator |
 | Kafka pod 미생성 | Strimzi 버전이 0.45+ (Zookeeper 제거됨) | --version 0.44.0 으로 재설치 |
+| `ImagePullBackOff` 또는 `ErrImagePull` | image tag 오타, private image 권한 없음, EKS 노드 인터넷/NAT 문제, Docker Hub rate limit | `kubectl describe pod <pod> -n <namespace>`로 실패 image 확인 후 tag/권한/네트워크 점검 |
 | `logstash` CrashLoopBackOff | Kafka 미실행 | Kafka 배포 후 자동 정상화 |

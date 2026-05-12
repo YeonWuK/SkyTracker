@@ -59,7 +59,7 @@ public class AmadeusTokenManger {
             }
 
             String token = (String) response.getBody().get("access_token");
-            log.info("accessToken = {}", token);
+            log.info("아마데우스 accessToken 발급 완료");
             redisClient.setValueWithTTL(RedisKeys.AMADEUS_TOKEN, token, Duration.ofMinutes(30));
             return token;
 
