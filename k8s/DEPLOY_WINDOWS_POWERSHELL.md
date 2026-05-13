@@ -84,6 +84,7 @@ Set-Location k8s
 | `docker.elastic.co/elasticsearch/elasticsearch:8.13.4` | Elasticsearch |
 | `docker.elastic.co/kibana/kibana:8.13.4` | Kibana |
 | `docker.elastic.co/logstash/logstash:8.13.4` | Logstash |
+| `docker.elastic.co/eck/eck-operator:2.13.0` | ECK Operator |
 | `quay.io/strimzi/operator:0.44.0` | Strimzi Operator |
 | `quay.io/strimzi/kafka:0.44.0-kafka-3.7.0` | Kafka broker |
 
@@ -134,7 +135,8 @@ ECK Operator를 먼저 설치한 뒤 Elasticsearch, Kibana, Logstash를 배포�
 # Operator 설치
 helm install elastic-operator elastic/eck-operator `
   -n elastic-system `
-  --create-namespace
+  --create-namespace `
+  --version 2.13.0
 
 # Operator Ready 대기
 kubectl wait --for=condition=ready pod `
