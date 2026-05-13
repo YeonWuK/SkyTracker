@@ -29,6 +29,7 @@ function Pull-Images {
             "docker.elastic.co/elasticsearch/elasticsearch:8.13.4",
             "docker.elastic.co/kibana/kibana:8.13.4",
             "docker.elastic.co/logstash/logstash:8.13.4",
+            "docker.elastic.co/eck/eck-operator:2.13.0",
             "quay.io/strimzi/operator:0.44.0",
             "quay.io/strimzi/kafka:0.44.0-kafka-3.7.0"
         )
@@ -81,7 +82,7 @@ function Deploy-Redis {
 
 function Deploy-Elastic {
     Invoke-Step "ECK Operator 설치" {
-        helm upgrade --install elastic-operator elastic/eck-operator -n elastic-system --create-namespace
+        helm upgrade --install elastic-operator elastic/eck-operator -n elastic-system --create-namespace --version 2.13.0
         kubectl wait --for=condition=ready pod -l app.kubernetes.io/name=elastic-operator -n elastic-system --timeout=120s
     }
 
