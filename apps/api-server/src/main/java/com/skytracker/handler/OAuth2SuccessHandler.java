@@ -37,7 +37,7 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
             return;
         }
 
-        String redirectUri = "exp://192.168.219.8:8081/--/redirect";
+        String redirectUri = "exp://192.168.219.6:8081/--/redirect";
 
         String targetUrl = redirectUri + "?accessToken=" +
                 URLEncoder.encode(accessToken, StandardCharsets.UTF_8);
